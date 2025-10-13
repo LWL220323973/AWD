@@ -1,0 +1,23 @@
+CREATE TABLE post_mobile_office (
+    id INT NOT NULL AUTO_INCREMENT COMMENT '主鍵ID / Primary Key ID',
+    mobile_code VARCHAR(10) NOT NULL COMMENT '流動郵政局編號 / Mobile Office Code',
+    location_tc VARCHAR(100) NOT NULL COMMENT '地點名稱(繁體中文) / Location Name (Traditional Chinese)',
+    location_sc VARCHAR(100) NOT NULL COMMENT '地點名稱(簡體中文) / Location Name (Simplified Chinese)',
+    location_en VARCHAR(100) NOT NULL COMMENT '地點名稱(英文) / Location Name (English)',
+    address_tc VARCHAR(200) NOT NULL COMMENT '地址(繁體中文) / Address (Traditional Chinese)',
+    address_sc VARCHAR(200) NOT NULL COMMENT '地址(簡體中文) / Address (Simplified Chinese)',
+    address_en VARCHAR(200) NOT NULL COMMENT '地址(英文) / Address (English)',
+    name_tc VARCHAR(100) NOT NULL COMMENT '名稱(繁體中文) / Name (Traditional Chinese)',
+    name_sc VARCHAR(100) NOT NULL COMMENT '名稱(簡體中文) / Name (Simplified Chinese)',
+    name_en VARCHAR(100) NOT NULL COMMENT '名稱(英文) / Name (English)',
+    district_tc VARCHAR(50) NOT NULL COMMENT '地區(繁體中文) / District (Traditional Chinese)',
+    district_sc VARCHAR(50) NOT NULL COMMENT '地區(簡體中文) / District (Simplified Chinese)',
+    district_en VARCHAR(50) NOT NULL COMMENT '地區(英文) / District (English)',
+    open_hour TIME NOT NULL COMMENT '開放時間 / Opening Hour',
+    close_hour TIME NOT NULL COMMENT '關閉時間 / Closing Hour',
+    day_of_week_code INT NOT NULL COMMENT '星期代碼(1-7) / Day of Week Code (1-7)',
+    latitude DECIMAL(10, 8) NOT NULL COMMENT '緯度 / Latitude',
+    longitude DECIMAL(11, 8) NOT NULL COMMENT '經度 / Longitude',
+    seq INT NOT NULL COMMENT '順序號碼 / Sequence Number',
+    PRIMARY KEY (`id`)
+)
