@@ -19,5 +19,6 @@ CREATE TABLE post_mobile_office (
     latitude DECIMAL(10, 8) NOT NULL COMMENT '緯度 / Latitude',
     longitude DECIMAL(11, 8) NOT NULL COMMENT '經度 / Longitude',
     seq INT NOT NULL COMMENT '順序號碼 / Sequence Number',
+    last_update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間 / Update Time',
     PRIMARY KEY (`id`)
 )
