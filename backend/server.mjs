@@ -25,7 +25,55 @@ conn.connect((err) => {
   console.log("Connected to the MySQL database.");
 });
 
-function createPostMobileOffice(officeInfo, updateTime) {
+// Insert mobile office
+server.post("/api/insertMobileOffice", (req, res) => {
+  const officeInfo = req.body.officeInfo;
+  insertPostMobileOffice(officeInfo, null);
+  res.send("Data received and processing started.");
+});
+
+// Delete mobile office by officeID
+server.delete("/api/deleteMobileOffice", (req, res) => {
+  const officeID = req.body.officeID;
+  deleteMobileOffice(officeID);
+  res.send("Delete request received.");
+});
+
+// Update mobile office by officeID
+server.put("/api/updateMobileOffice", (req, res) => {
+  const officeID = req.body.officeID;
+  const officeInfo = req.body.officeInfo;
+  updateMobileOffice(officeID, officeInfo);
+  res.send("Update request received.");
+});
+
+// Select mobile office by English display
+server.post("/api/selectMobileOfficeByEnglish", (req, res) => {
+  const officeInfo = req.body.officeInfo;
+  selectMobileOfficeByEnglish(officeInfo);
+  res.send("Select request received.");
+});
+
+// Select mobile office by Traditional Chinese display
+server.post("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {
+  const officeInfo = req.body.officeInfo;
+  selectMobileOfficeByTraditionalChinese(officeInfo);
+  res.send("Select request received.");
+});
+
+// Select mobile office by Simplified Chinese display
+server.post("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {
+  const officeInfo = req.body.officeInfo;
+  selectMobileOfficeBySimplifiedChinese(officeInfo);
+  res.send("Select request received.");
+});
+
+//
+//SQL functions
+//
+
+// Insert mobile office
+function insertPostMobileOffice(officeInfo, updateTime) {
   const {
     mobileCode,
     locationTC,
@@ -76,7 +124,7 @@ function createPostMobileOffice(officeInfo, updateTime) {
         console.error("Error inserting data:", err);
         return;
       }
-      console.log("Data inserted successfully");
+      console.log("Data inserted successfully: ", values);
     });
   } else {
     const sql =
@@ -108,35 +156,64 @@ function createPostMobileOffice(officeInfo, updateTime) {
         console.error("Error inserting data:", err);
         return;
       }
-      console.log("Data inserted successfully");
+      console.log("Data inserted successfully: ", values);
     });
   }
 }
 
-fs.readdir("../datasource", (err, files) => {
-  if (err) {
-    console.error("Error reading directory:", err);
-    return;
-  }
-  files.forEach((file) => {
-    if (file.endsWith(".json")) {
-      fs.readFile(`../datasource/${file}`, "utf8", (err, data) => {
-        if (err) {
-          console.error("Error reading JSON file:", err);
-          return;
-        }
-        try {
-          const jsonData = JSON.parse(data);
-          const lastUpdateTime = jsonData.lastUpdateTime;
-          jsonData.data.forEach((item) => {
-            createPostMobileOffice(item, lastUpdateTime);
-          });
-        } catch (parseErr) {
-          console.error("Error parsing JSON:", parseErr);
-        }
-      });
+// Delete mobile office by officeID
+function deleteMobileOffice(officeID) {
+  const sql = "DELETE FROM `post_mobile_office` WHERE id = ?";
+  const values = [officeID];
+  conn.query(sql, values, (err, results) => {
+    if (err) {
+      console.error("Error deleting data:", err);
+      return;
     }
+    console.log("Data deleted successfully for officeID: ", officeID);
   });
-});
+}
 
+// Update mobile office by officeID
+function updateMobileOffice(officeID, officeInfo) {}
+
+//Select mobile office by English display
+function selectMobileOfficeByEnglish(officeInfo) {}
+
+//Select mobile office by Traditional Chinese display
+function selectMobileOfficeByTraditionalChinese(officeInfo) {}
+
+//Select mobile office by Simplified Chinese display
+function selectMobileOfficeBySimplifiedChinese(officeInfo) {}
+
+//Initialize file operations to read JSON files and insert data into the database
+function initializeFileOperations() {
+  fs.readdir("../datasource", (err, files) => {
+    if (err) {
+      console.error("Error reading directory:", err);
+      return;
+    }
+    files.forEach((file) => {
+      if (file.endsWith(".json")) {
+        fs.readFile(`../datasource/${file}`, "utf8", (err, data) => {
+          if (err) {
+            console.error("Error reading JSON file:", err);
+            return;
+          }
+          try {
+            const jsonData = JSON.parse(data);
+            const lastUpdateTime = jsonData.lastUpdateTime;
+            jsonData.data.forEach((item) => {
+              insertPostMobileOffice(item, lastUpdateTime);
+            });
+          } catch (parseErr) {
+            console.error("Error parsing JSON:", parseErr);
+          }
+        });
+      }
+    });
+  });
+}
+
+initializeFileOperations();
 server.use(express.json());
