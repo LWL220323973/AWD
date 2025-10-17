@@ -1,7 +1,6 @@
 import express from "express";
 import mysql from "mysql2";
 import fs from "fs";
-// import https from "https";
 
 const server = express();
 
@@ -13,9 +12,11 @@ const conn = mysql.createConnection({
   database: "awd",
 });
 
-server.listen(8888, function () {
+server.listen(8080, function () {
   console.log("server started");
 });
+
+server.use(express.json());
 
 conn.connect((err) => {
   if (err) {
@@ -26,47 +27,22 @@ conn.connect((err) => {
 });
 
 // Insert mobile office
-server.post("/api/insertMobileOffice", (req, res) => {
-  const officeInfo = req.body.officeInfo;
-  insertPostMobileOffice(officeInfo, null);
-  res.send("Data received and processing started.");
-});
+server.post("/api/insertMobileOffice", (req, res) => {});
 
 // Delete mobile office by officeID
-server.delete("/api/deleteMobileOffice", (req, res) => {
-  const officeID = req.body.officeID;
-  deleteMobileOffice(officeID);
-  res.send("Delete request received.");
-});
+server.delete("/api/deleteMobileOffice", (req, res) => {});
 
 // Update mobile office by officeID
-server.put("/api/updateMobileOffice", (req, res) => {
-  const officeID = req.body.officeID;
-  const officeInfo = req.body.officeInfo;
-  updateMobileOffice(officeID, officeInfo);
-  res.send("Update request received.");
-});
+server.put("/api/updateMobileOffice", (req, res) => {});
 
 // Select mobile office by English display
-server.post("/api/selectMobileOfficeByEnglish", (req, res) => {
-  const officeInfo = req.body.officeInfo;
-  selectMobileOfficeByEnglish(officeInfo);
-  res.send("Select request received.");
-});
+server.get("/api/selectMobileOfficeByEnglish", (req, res) => {});
 
 // Select mobile office by Traditional Chinese display
-server.post("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {
-  const officeInfo = req.body.officeInfo;
-  selectMobileOfficeByTraditionalChinese(officeInfo);
-  res.send("Select request received.");
-});
+server.get("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {});
 
 // Select mobile office by Simplified Chinese display
-server.post("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {
-  const officeInfo = req.body.officeInfo;
-  selectMobileOfficeBySimplifiedChinese(officeInfo);
-  res.send("Select request received.");
-});
+server.get("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {});
 
 //
 //SQL functions
@@ -215,5 +191,5 @@ function initializeFileOperations() {
   });
 }
 
-initializeFileOperations();
+// initializeFileOperations();
 server.use(express.json());
