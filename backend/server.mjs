@@ -14,6 +14,7 @@ const conn = mysql.createConnection({
 
 server.listen(8080, function () {
   console.log("server started");
+  // initializeFileOperations();
 });
 
 server.use(express.json());
@@ -49,7 +50,7 @@ server.get("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {});
 //
 
 // Insert mobile office
-function insertPostMobileOffice(officeInfo, updateTime) {
+function insertPostMobileOffice(officeInfo) {
   const {
     mobileCode,
     locationTC,
@@ -71,70 +72,36 @@ function insertPostMobileOffice(officeInfo, updateTime) {
     longitude,
     seq,
   } = officeInfo;
-  if (updateTime == null || updateTime === undefined || updateTime == "") {
-    const sql =
-      "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`, `seq`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    const values = [
-      mobileCode,
-      locationTC,
-      locationSC,
-      locationEN,
-      addressTC,
-      addressSC,
-      addressEN,
-      nameTC,
-      nameSC,
-      nameEN,
-      districtTC,
-      districtSC,
-      districtEN,
-      openHour,
-      closeHour,
-      dayOfWeekCode,
-      latitude,
-      longitude,
-      seq,
-    ];
-    conn.query(sql, values, (err, results) => {
-      if (err) {
-        console.error("Error inserting data:", err);
-        return;
-      }
-      console.log("Data inserted successfully: ", values);
-    });
-  } else {
-    const sql =
-      "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`, `seq`,`last_update_time`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    const values = [
-      mobileCode,
-      locationTC,
-      locationSC,
-      locationEN,
-      addressTC,
-      addressSC,
-      addressEN,
-      nameTC,
-      nameSC,
-      nameEN,
-      districtTC,
-      districtSC,
-      districtEN,
-      openHour,
-      closeHour,
-      dayOfWeekCode,
-      latitude,
-      longitude,
-      seq,
-      updateTime,
-    ];
-    conn.query(sql, values, (err, results) => {
-      if (err) {
-        console.error("Error inserting data:", err);
-        return;
-      }
-      console.log("Data inserted successfully: ", values);
-    });
-  }
+  const sql =
+    "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`, `seq`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [
+    mobileCode,
+    locationTC,
+    locationSC,
+    locationEN,
+    addressTC,
+    addressSC,
+    addressEN,
+    nameTC,
+    nameSC,
+    nameEN,
+    districtTC,
+    districtSC,
+    districtEN,
+    openHour,
+    closeHour,
+    dayOfWeekCode,
+    latitude,
+    longitude,
+    seq,
+  ];
+  conn.query(sql, values, (err, results) => {
+    if (err) {
+      console.error("Error inserting data:", err);
+      return;
+    }
+    console.log("Data inserted successfully: ", values);
+  });
 }
 
 // Delete mobile office by officeID
@@ -180,7 +147,37 @@ function initializeFileOperations() {
             const jsonData = JSON.parse(data);
             const lastUpdateTime = jsonData.lastUpdateTime;
             jsonData.data.forEach((item) => {
-              insertPostMobileOffice(item, lastUpdateTime);
+              const sql =
+                "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`, `seq`,`last_update_time`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+              const values = [
+                mobileCode,
+                locationTC,
+                locationSC,
+                locationEN,
+                addressTC,
+                addressSC,
+                addressEN,
+                nameTC,
+                nameSC,
+                nameEN,
+                districtTC,
+                districtSC,
+                districtEN,
+                openHour,
+                closeHour,
+                dayOfWeekCode,
+                latitude,
+                longitude,
+                seq,
+                lastUpdateTime,
+              ];
+              conn.query(sql, values, (err, results) => {
+                if (err) {
+                  console.error("Error inserting data:", err);
+                  return;
+                }
+                console.log("Data inserted successfully: ", values);
+              });
             });
           } catch (parseErr) {
             console.error("Error parsing JSON:", parseErr);
@@ -190,6 +187,3 @@ function initializeFileOperations() {
     });
   });
 }
-
-// initializeFileOperations();
-server.use(express.json());
