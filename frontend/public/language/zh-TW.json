@@ -20,5 +20,14 @@
   "Sai Kung": "西貢區",
   "Sha Tin": "沙田區",
   "Kwai Tsing": "葵青區",
-  "Islands District": "離島區"
+  "Islands District": "離島區",
+  "address": "地址",
+  "officeHours": "辦公時間",
+  "weekdays": "工作日",
+  "Monday": "星期一",
+  "Tuesday": "星期二",
+  "Wednesday": "星期三",
+  "Thursday": "星期四",
+  "Friday": "星期五",
+  "clear": "清除"
 }
