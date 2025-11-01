@@ -14,6 +14,7 @@ import { NzCheckboxModule, NzCheckboxOption } from 'ng-zorro-antd/checkbox';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import {select} from './api/select';
 
 interface LanguageOption {
   value: string;
@@ -45,7 +46,6 @@ interface districtOption {
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-
 export class App implements OnInit {
   selectedLanguage: string = 'en-US';
   translations: any = {};
@@ -69,6 +69,8 @@ export class App implements OnInit {
   weekdayOptions: NzCheckboxOption[] = [];
 
   constructor(private http: HttpClient) {}
+
+  searchData: any[] = [];
 
   ngOnInit() {
     this.loadLanguage(this.selectedLanguage);
@@ -162,5 +164,16 @@ export class App implements OnInit {
 
   clearAddress(): void {
     this.address = '';
+  }
+
+  async onSubmit(): Promise<void>  {
+    const searchItems = {
+      location: this.location.trim() ? this.location.trim() : undefined,
+      district: this.selectedDistrict.trim() ? this.selectedDistrict.trim() : undefined,
+      address: this.address.trim() ? this.address.trim() : undefined,
+      openHour: this.openHour ? this.openHour.toTimeString().slice(0, 5) : undefined,
+      closingHour: this.closingHour ? this.closingHour.toTimeString().slice(0, 5) : undefined,
+      currentLanguage: this.selectedLanguage
+    };
   }
 }

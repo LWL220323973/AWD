@@ -4,6 +4,25 @@ import fs from "fs";
 
 const server = express();
 
+// CORS middleware - must be before other middleware
+server.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+    return;
+  }
+  next();
+});
+
+// JSON middleware
+server.use(express.json());
+
 const conn = mysql.createConnection({
   connectionLimit: 10,
   host: "localhost",
@@ -16,8 +35,6 @@ server.listen(8080, function () {
   console.log("server started");
   // initializeFileOperations();
 });
-
-server.use(express.json());
 
 conn.connect((err) => {
   if (err) {
@@ -37,13 +54,22 @@ server.delete("/api/deleteMobileOffice", (req, res) => {});
 server.put("/api/updateMobileOffice", (req, res) => {});
 
 // Select mobile office by English display
-server.get("/api/selectMobileOfficeByEnglish", (req, res) => {});
+server.post("/api/selectMobileOfficeByEnglish", (req, res) => {
+  const searchParams = req.body;
+  selectMobileOfficeByEnglish(searchParams, res);
+});
 
 // Select mobile office by Traditional Chinese display
-server.get("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {});
+server.post("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {
+  const searchParams = req.body;
+  selectMobileOfficeByTraditionalChinese(searchParams, res);
+});
 
 // Select mobile office by Simplified Chinese display
-server.get("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {});
+server.post("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {
+  const searchParams = req.body;
+  selectMobileOfficeBySimplifiedChinese(searchParams, res);
+});
 
 //
 //SQL functions
@@ -121,7 +147,49 @@ function deleteMobileOffice(officeID) {
 function updateMobileOffice(officeID, officeInfo) {}
 
 //Select mobile office by English display
-function selectMobileOfficeByEnglish(officeInfo) {}
+function selectMobileOfficeByEnglish(searchParams, res) {
+  let sql =
+    "SELECT id, mobile_code, location_en, address_en, name_en, district_en, open_hour, close_hour, day_of_week_code, latitude, longitude FROM `post_mobile_office` WHERE 1=1";
+  const values = [];
+
+  // Add search conditions
+  if (searchParams.location !== undefined) {
+    sql += " OR location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?";
+    values.push(`%${searchParams.location}%`);
+    values.push(`%${searchParams.location}%`);
+    values.push(`%${searchParams.location}%`);
+  }
+
+  if (
+    searchParams.district !== undefined 
+  ) {
+    sql += " AND (district_en = ? OR district_tc = ? OR district_sc = ?) ";
+    values.push(searchParams.district.trim());
+    values.push(searchParams.district.trim());
+    values.push(searchParams.district.trim());
+  }
+
+  if (searchParams.address !== undefined) {
+    sql += " AND (address_en LIKE ? OR address_tc LIKE ? OR address_sc LIKE ?)";
+    values.push(`%${searchParams.address}%`);
+    values.push(`%${searchParams.address.trim()}%`);
+    values.push(`%${searchParams.address.trim()}%`);
+  }
+
+  if (searchParams.openHour !== undefined) {
+    sql += " AND open_hour >= ? ";
+    values.push(searchParams.openHour);
+  }
+
+  if (searchParams.closeHour !== null) {
+    sql += " AND close_hour <= ? ";
+    values.push(searchParams.closeHour);
+  }
+
+  conn.query(sql, values, (err, results) => {
+
+  });
+}
 
 //Select mobile office by Traditional Chinese display
 function selectMobileOfficeByTraditionalChinese(officeInfo) {}

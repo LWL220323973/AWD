@@ -125,7 +125,7 @@
           </nz-col>
         </nz-row>
       </form>
-      <nz-table #dataTable [nzFrontPagination]="false" [nzPageSize]="10">
+      <nz-table #searchTable [nzData]="searchData" nzTableLayout="fixed">
         <thead>
           <tr>
             <!-- <th>{{ getTranslation('name') }}</th> -->
@@ -137,7 +137,14 @@
           </tr>
         </thead>
         <tbody>
-          
+          <tr *ngFor="let data of searchTable.data">
+            <!-- <td>{{ data.name }}</td> -->
+            <td>{{ data.location }}</td>
+            <td>{{ data.district }}</td>
+            <td>{{ data.address }}</td>
+            <td>{{ data.open_hour }} - {{ data.close_hour }}</td>
+            <td>{{ data.weekdays }}</td>
+          </tr>
         </tbody>
       </nz-table>
     </nz-space>
