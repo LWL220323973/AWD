@@ -14,7 +14,8 @@ import { NzCheckboxModule, NzCheckboxOption } from 'ng-zorro-antd/checkbox';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
-import {select} from './api/select';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { select } from '../../api/select';
 
 interface LanguageOption {
   value: string;
@@ -42,9 +43,10 @@ interface districtOption {
     NzButtonModule,
     NzTableModule,
     NzSpaceModule,
+    NzTabsModule,
   ],
-  templateUrl: './app.html',
-  styleUrl: './app.css',
+  templateUrl: './home.html',
+  styleUrl: './home.css',
 })
 export class App implements OnInit {
   selectedLanguage: string = 'en-US';
@@ -74,6 +76,7 @@ export class App implements OnInit {
 
   ngOnInit() {
     this.loadLanguage(this.selectedLanguage);
+    this.onSubmit();
   }
 
   // Load language JSON file
@@ -108,6 +111,7 @@ export class App implements OnInit {
     this.selectedLanguage = language;
     console.log('Language changed to:', language);
     this.loadLanguage(language);
+    this.onSubmit();
   }
 
   // Update options after language loading
@@ -134,11 +138,11 @@ export class App implements OnInit {
     ];
 
     this.weekdayOptions = [
-      { label: this.getTranslation('Monday'), value: '1' },
-      { label: this.getTranslation('Tuesday'), value: '2' },
-      { label: this.getTranslation('Wednesday'), value: '3' },
-      { label: this.getTranslation('Thursday'), value: '4' },
-      { label: this.getTranslation('Friday'), value: '5' },
+      { label: this.getTranslation('Monday'), value: 1 },
+      { label: this.getTranslation('Tuesday'), value: 2 },
+      { label: this.getTranslation('Wednesday'), value: 3 },
+      { label: this.getTranslation('Thursday'), value: 4 },
+      { label: this.getTranslation('Friday'), value: 5 },
     ];
   }
 
@@ -166,14 +170,39 @@ export class App implements OnInit {
     this.address = '';
   }
 
-  async onSubmit(): Promise<void>  {
+  async onSubmit(): Promise<void> {
     const searchItems = {
       location: this.location.trim() ? this.location.trim() : undefined,
       district: this.selectedDistrict.trim() ? this.selectedDistrict.trim() : undefined,
       address: this.address.trim() ? this.address.trim() : undefined,
       openHour: this.openHour ? this.openHour.toTimeString().slice(0, 5) : undefined,
       closingHour: this.closingHour ? this.closingHour.toTimeString().slice(0, 5) : undefined,
-      currentLanguage: this.selectedLanguage
+      currentLanguage: this.selectedLanguage,
     };
+    console.log('Submitting search with items:', searchItems);
+    try {
+      const response = await select(searchItems);
+
+      // Extract the actual data array from backend response
+      if (response.data && response.data.success && Array.isArray(response.data.data)) {
+        this.searchData = response.data.data.map((item: any)=>{
+          return {...item,
+            open_hour: item.open_hour.slice(0, 5),
+            close_hour: item.close_hour.slice(0, 5)
+          };
+        });
+      } else {
+        this.searchData = [];
+        console.error('Invalid response format or no data received');
+      }
+      console.log('Final search data:', this.searchData);
+    } catch (error) {
+      console.error('Search failed:', error);
+      this.searchData = [];
+    }
+  }
+
+  getDayOfWeekData(dayofWeek: number | string) {
+    return this.searchData.filter((item) => item.day_of_week_code === dayofWeek);
   }
 }

@@ -1,31 +1,13 @@
+import axios from 'axios';
 
 const apiUrl = 'http://localhost:8080/api/';
 
 export function select(value: any) {
   if (value.currentLanguage === 'en-US') {
-    return fetch(`${apiUrl}selectMobileOfficeByEnglish`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(value),
-    });
-
+    return axios.post(`${apiUrl}selectMobileOfficeByEnglish`, value);
   } else if (value.currentLanguage === 'zh-TW') {
-    return fetch(`${apiUrl}selectMobileOfficeByTraditionalChinese`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(value),
-    });
+    return axios.post(`${apiUrl}selectMobileOfficeByTraditionalChinese`, value);
   } else {
-    return fetch(`${apiUrl}selectMobileOfficeBySimplifiedChinese`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(value),
-    });
+    return axios.post(`${apiUrl}selectMobileOfficeBySimplifiedChinese`, value);
   }
 }

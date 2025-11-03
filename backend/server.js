@@ -6,14 +6,11 @@ const server = express();
 
 // CORS middleware - must be before other middleware
 server.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:4200");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-
-  if (req.method === "OPTIONS") {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
     res.sendStatus(200);
     return;
   }
@@ -171,7 +168,7 @@ function selectMobileOfficeByEnglish(searchParams, res) {
 
   if (searchParams.address !== undefined) {
     sql += " AND (address_en LIKE ? OR address_tc LIKE ? OR address_sc LIKE ?)";
-    values.push(`%${searchParams.address}%`);
+    values.push(`%${searchParams.address.trim()}%`);
     values.push(`%${searchParams.address.trim()}%`);
     values.push(`%${searchParams.address.trim()}%`);
   }
@@ -181,21 +178,130 @@ function selectMobileOfficeByEnglish(searchParams, res) {
     values.push(searchParams.openHour);
   }
 
-  if (searchParams.closeHour !== null) {
+  if (searchParams.closeHour !== undefined) {
     sql += " AND close_hour <= ? ";
     values.push(searchParams.closeHour);
   }
 
+  console.log('Executing SQL:', sql);
+  console.log('With values:', values);
+  
   conn.query(sql, values, (err, results) => {
-
+    if (err) {
+      console.error("Error selecting data:", err);
+      res.status(500).json({ error: "Database query failed", details: err.message });
+      return;
+    }
+    console.log('Query results:', results);
+    res.json({ success: true, data: results });
   });
 }
 
 //Select mobile office by Traditional Chinese display
-function selectMobileOfficeByTraditionalChinese(officeInfo) {}
+function selectMobileOfficeByTraditionalChinese(searchParams, res) {
+  let sql =
+    "SELECT id, mobile_code, location_tc, address_tc, name_tc, district_tc, open_hour, close_hour, day_of_week_code, latitude, longitude FROM `post_mobile_office` WHERE 1=1";
+  const values = [];
+
+  // Add search conditions
+  if (searchParams.location !== undefined) {
+    sql += " OR location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?";
+    values.push(`%${searchParams.location}%`);
+    values.push(`%${searchParams.location}%`);
+    values.push(`%${searchParams.location}%`);
+  }
+
+  if (
+    searchParams.district !== undefined 
+  ) {
+    sql += " AND (district_en = ? OR district_tc = ? OR district_sc = ?) ";
+    values.push(searchParams.district.trim());
+    values.push(searchParams.district.trim());
+    values.push(searchParams.district.trim());
+  }
+
+  if (searchParams.address !== undefined) {
+    sql += " AND (address_en LIKE ? OR address_tc LIKE ? OR address_sc LIKE ?)";
+    values.push(`%${searchParams.address.trim()}%`);
+    values.push(`%${searchParams.address.trim()}%`);
+    values.push(`%${searchParams.address.trim()}%`);
+  }
+
+  if (searchParams.openHour !== undefined) {
+    sql += " AND open_hour >= ? ";
+    values.push(searchParams.openHour);
+  }
+
+  if (searchParams.closeHour !== undefined) {
+    sql += " AND close_hour <= ? ";
+    values.push(searchParams.closeHour);
+  }
+
+  console.log('Executing SQL:', sql);
+  console.log('With values:', values);
+  
+  conn.query(sql, values, (err, results) => {
+    if (err) {
+      console.error("Error selecting data:", err);
+      res.status(500).json({ error: "Database query failed", details: err.message });
+      return;
+    }
+    console.log('Query results:', results);
+    res.json({ success: true, data: results });
+  });
+}
 
 //Select mobile office by Simplified Chinese display
-function selectMobileOfficeBySimplifiedChinese(officeInfo) {}
+function selectMobileOfficeBySimplifiedChinese(searchParams, res) {
+  let sql =
+    "SELECT id, mobile_code, location_sc, address_sc, name_sc, district_sc, open_hour, close_hour, day_of_week_code, latitude, longitude FROM `post_mobile_office` WHERE 1=1";
+  const values = [];
+
+  // Add search conditions
+  if (searchParams.location !== undefined) {
+    sql += " OR location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?";
+    values.push(`%${searchParams.location}%`);
+    values.push(`%${searchParams.location}%`);
+    values.push(`%${searchParams.location}%`);
+  }
+
+  if (searchParams.district !== undefined) {
+    sql += " AND (district_en = ? OR district_tc = ? OR district_sc = ?) ";
+    values.push(searchParams.district.trim());
+    values.push(searchParams.district.trim());
+    values.push(searchParams.district.trim());
+  }
+
+  if (searchParams.address !== undefined) {
+    sql += " AND (address_en LIKE ? OR address_tc LIKE ? OR address_sc LIKE ?)";
+    values.push(`%${searchParams.address.trim()}%`);
+    values.push(`%${searchParams.address.trim()}%`);
+    values.push(`%${searchParams.address.trim()}%`);
+  }
+
+  if (searchParams.openHour !== undefined) {
+    sql += " AND open_hour >= ? ";
+    values.push(searchParams.openHour);
+  }
+
+  if (searchParams.closeHour !== undefined) {
+    sql += " AND close_hour <= ? ";
+    values.push(searchParams.closeHour);
+  }
+
+  console.log('Executing SQL (SC):', sql);
+  console.log('With values:', values);
+  
+  conn.query(sql, values, (err, results) => {
+    if (err) {
+      console.error("Error selecting data:", err);
+      res.status(500).json({ error: "Database query failed", details: err.message });
+      return;
+    }
+    console.log('Query results (SC):', results);
+    res.json({ success: true, data: results });
+  });
+}
 
 //Initialize file operations to read JSON files and insert data into the database
 function initializeFileOperations() {
