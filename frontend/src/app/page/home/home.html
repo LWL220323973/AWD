@@ -43,6 +43,7 @@
               <nz-form-label>{{ getTranslation('district') }}</nz-form-label>
               <nz-form-control>
                 <nz-select
+                  nzAllowClear
                   [nzOptions]="districtOptions"
                   [attr.id]="'district'"
                   [(ngModel)]="selectedDistrict"
@@ -115,7 +116,7 @@
           </nz-col>
         </nz-row>
       </form>
-      <nz-tabs nzType="card" class="weekdayTab">
+      <nz-tabs nzType="card" class="weekdayTab" [nzAnimated]="false">
         @for (weekDay of weekdayOptions;track weekDay){
         <nz-tab [nzTitle]="weekDay.label">
           <nz-table #searchTable [nzData]="getDayOfWeekData(weekDay.value)" nzTableLayout="fixed">
@@ -126,6 +127,7 @@
                 <th>{{ getTranslation('district') }}</th>
                 <th>{{ getTranslation('address') }}</th>
                 <th>{{ getTranslation('officeHours') }}</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>

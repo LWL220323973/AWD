@@ -160,6 +160,7 @@ export class App implements OnInit {
     this.closingHour = null;
     this.selectedWeekdays = [];
     console.log('Form has been reset');
+    this.onSubmit();
   }
 
   clearLocation(): void {
@@ -185,10 +186,11 @@ export class App implements OnInit {
 
       // Extract the actual data array from backend response
       if (response.data && response.data.success && Array.isArray(response.data.data)) {
-        this.searchData = response.data.data.map((item: any)=>{
-          return {...item,
+        this.searchData = response.data.data.map((item: any) => {
+          return {
+            ...item,
             open_hour: item.open_hour.slice(0, 5),
-            close_hour: item.close_hour.slice(0, 5)
+            close_hour: item.close_hour.slice(0, 5),
           };
         });
       } else {

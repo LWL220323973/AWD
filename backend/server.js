@@ -151,7 +151,7 @@ function selectMobileOfficeByEnglish(searchParams, res) {
 
   // Add search conditions
   if (searchParams.location !== undefined) {
-    sql += " OR location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?";
+    sql += " AND (location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?)";
     values.push(`%${searchParams.location}%`);
     values.push(`%${searchParams.location}%`);
     values.push(`%${searchParams.location}%`);
@@ -160,7 +160,7 @@ function selectMobileOfficeByEnglish(searchParams, res) {
   if (
     searchParams.district !== undefined 
   ) {
-    sql += " AND (district_en = ? OR district_tc = ? OR district_sc = ?) ";
+    sql += " AND district_en = ?";
     values.push(searchParams.district.trim());
     values.push(searchParams.district.trim());
     values.push(searchParams.district.trim());
@@ -192,7 +192,6 @@ function selectMobileOfficeByEnglish(searchParams, res) {
       res.status(500).json({ error: "Database query failed", details: err.message });
       return;
     }
-    console.log('Query results:', results);
     res.json({ success: true, data: results });
   });
 }
@@ -205,7 +204,7 @@ function selectMobileOfficeByTraditionalChinese(searchParams, res) {
 
   // Add search conditions
   if (searchParams.location !== undefined) {
-    sql += " OR location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?";
+    sql += " AND (location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?)";
     values.push(`%${searchParams.location}%`);
     values.push(`%${searchParams.location}%`);
     values.push(`%${searchParams.location}%`);
@@ -214,9 +213,7 @@ function selectMobileOfficeByTraditionalChinese(searchParams, res) {
   if (
     searchParams.district !== undefined 
   ) {
-    sql += " AND (district_en = ? OR district_tc = ? OR district_sc = ?) ";
-    values.push(searchParams.district.trim());
-    values.push(searchParams.district.trim());
+    sql += " AND district_en = ?";
     values.push(searchParams.district.trim());
   }
 
@@ -246,7 +243,6 @@ function selectMobileOfficeByTraditionalChinese(searchParams, res) {
       res.status(500).json({ error: "Database query failed", details: err.message });
       return;
     }
-    console.log('Query results:', results);
     res.json({ success: true, data: results });
   });
 }
@@ -259,14 +255,14 @@ function selectMobileOfficeBySimplifiedChinese(searchParams, res) {
 
   // Add search conditions
   if (searchParams.location !== undefined) {
-    sql += " OR location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?";
+    sql += " AND (location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?)";
     values.push(`%${searchParams.location}%`);
     values.push(`%${searchParams.location}%`);
     values.push(`%${searchParams.location}%`);
   }
 
   if (searchParams.district !== undefined) {
-    sql += " AND (district_en = ? OR district_tc = ? OR district_sc = ?) ";
+    sql += " AND district_en = ?";
     values.push(searchParams.district.trim());
     values.push(searchParams.district.trim());
     values.push(searchParams.district.trim());
@@ -298,7 +294,6 @@ function selectMobileOfficeBySimplifiedChinese(searchParams, res) {
       res.status(500).json({ error: "Database query failed", details: err.message });
       return;
     }
-    console.log('Query results (SC):', results);
     res.json({ success: true, data: results });
   });
 }
