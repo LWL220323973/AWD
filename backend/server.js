@@ -54,19 +54,19 @@ server.delete("/api/deleteMobileOffice", (req, res) => {});
 server.put("/api/updateMobileOffice", (req, res) => {});
 
 // Select mobile office by English display
-server.post("/api/selectMobileOfficeByEnglish", (req, res) => {
+server.get("/api/selectMobileOfficeByEnglish", (req, res) => {
   const searchParams = req.body ? req.body : "";
   selectMobileOfficeByEnglish(searchParams, res);
 });
 
 // Select mobile office by Traditional Chinese display
-server.post("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {
+server.get("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {
   const searchParams = req.body ? req.body : "";
   selectMobileOfficeByTraditionalChinese(searchParams, res);
 });
 
 // Select mobile office by Simplified Chinese display
-server.post("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {
+server.get("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {
   const searchParams = req.body ? req.body : "";
   selectMobileOfficeBySimplifiedChinese(searchParams, res);
 });

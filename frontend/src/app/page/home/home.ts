@@ -15,6 +15,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { select } from '../../api/select';
 
 interface LanguageOption {
@@ -44,6 +45,7 @@ interface districtOption {
     NzTableModule,
     NzSpaceModule,
     NzTabsModule,
+    NzEmptyModule,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

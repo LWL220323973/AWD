@@ -119,7 +119,15 @@
       <nz-tabs nzType="card" class="weekdayTab" [nzAnimated]="false">
         @for (weekDay of weekdayOptions;track weekDay){
         <nz-tab [nzTitle]="weekDay.label">
-          <nz-table #searchTable [nzData]="getDayOfWeekData(weekDay.value)" nzTableLayout="fixed">
+          <nz-table
+            #searchTable
+            [nzData]="getDayOfWeekData(weekDay.value)"
+            nzTableLayout="fixed"
+            [nzNoResult]="noDataTemplate"
+          >
+            <ng-template #noDataTemplate>
+              <nz-empty [nzNotFoundContent]="getTranslation('No data')"></nz-empty>
+            </ng-template>
             <thead>
               <tr>
                 <!-- <th>{{ getTranslation('name') }}</th> -->
