@@ -1,13 +1,12 @@
 import express from "express";
 import mysql from "mysql2";
 import fs from "fs";
-import { json } from "stream/consumers";
 
 const server = express();
 
 // CORS middleware - must be before other middleware
 server.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header(
     "Access-Control-Allow-Headers",
@@ -56,19 +55,19 @@ server.put("/api/updateMobileOffice", (req, res) => {});
 
 // Select mobile office by English display
 server.post("/api/selectMobileOfficeByEnglish", (req, res) => {
-  const searchParams = req.body;
+  const searchParams = req.body ? req.body : "";
   selectMobileOfficeByEnglish(searchParams, res);
 });
 
 // Select mobile office by Traditional Chinese display
 server.post("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {
-  const searchParams = req.body;
+  const searchParams = req.body ? req.body : "";
   selectMobileOfficeByTraditionalChinese(searchParams, res);
 });
 
 // Select mobile office by Simplified Chinese display
 server.post("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {
-  const searchParams = req.body;
+  const searchParams = req.body ? req.body : "";
   selectMobileOfficeBySimplifiedChinese(searchParams, res);
 });
 
@@ -309,13 +308,31 @@ function selectMobileOfficeBySimplifiedChinese(searchParams, res) {
 
 //Initialize file operations to read JSON files and insert data into the database
 function initializeFileOperations() {
-  conn.query("DELETE FROM `post_mobile_office`", (err, results) => {
+  conn.query("DROP TABLE IF EXISTS `post_mobile_office`", (err, results) => {
     if (err) {
       console.error("Error deleting existing data:", err);
       return;
     }
     console.log("Existing database deleted successfully.");
   });
+
+  fs.readFile(
+    "../Information/create_mobile_office_table.sql",
+    "utf8",
+    (err, sql) => {
+      if (err) {
+        console.error("Error reading SQL file:", err);
+        return;
+      }
+      conn.query(sql, (err, results) => {
+        if (err) {
+          console.error("Error creating table:", err);
+          return;
+        }
+      });
+    }
+  );
+
   fs.readdir("../datasource", (err, files) => {
     if (err) {
       console.error("Error reading directory:", err);
