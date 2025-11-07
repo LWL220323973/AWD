@@ -22,6 +22,7 @@ server.use((req, res, next) => {
 
 // JSON middleware
 server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
 
 const conn = mysql.createConnection({
   connectionLimit: 10,
@@ -54,20 +55,20 @@ server.delete("/api/deleteMobileOffice", (req, res) => {});
 server.put("/api/updateMobileOffice", (req, res) => {});
 
 // Select mobile office by English display
-server.get("/api/selectMobileOfficeByEnglish", (req, res) => {
-  const searchParams = req.body ? req.body : "";
-  selectMobileOfficeByEnglish(searchParams, res);
-});
+server.get("/api/selectMobileOfficeByEnglish", (req, res)=>{
+  const searchParams = req.query ? req.query : "";
+  selectMobileOfficeByEnglish(req.query, res);
+})
 
 // Select mobile office by Traditional Chinese display
 server.get("/api/selectMobileOfficeByTraditionalChinese", (req, res) => {
-  const searchParams = req.body ? req.body : "";
+  const searchParams = req.query ? req.query : "";
   selectMobileOfficeByTraditionalChinese(searchParams, res);
 });
 
 // Select mobile office by Simplified Chinese display
 server.get("/api/selectMobileOfficeBySimplifiedChinese", (req, res) => {
-  const searchParams = req.body ? req.body : "";
+  const searchParams = req.query ? req.query : "";
   selectMobileOfficeBySimplifiedChinese(searchParams, res);
 });
 
@@ -378,7 +379,7 @@ function initializeFileOperations() {
                   console.error("Error inserting data:", err);
                   return;
                 }
-                console.log("Data inserted successfully: ", values);
+                // console.log("Data inserted successfully: ", values);
               });
             });
           } catch (parseErr) {
