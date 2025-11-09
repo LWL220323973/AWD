@@ -1,20 +1,4 @@
-<nz-layout>
-  <nz-header>
-    <div class="header_title">
-      <h1 class="header_title_h1">{{ getTranslation('title') }}</h1>
-      <div class="language-selector">
-        <span nz-icon nzType="global" nzTheme="outline" class="language-icon"></span>
-        <nz-select
-          style="width: 120px"
-          [(ngModel)]="selectedLanguage"
-          (ngModelChange)="onLanguageChange($event)"
-          [nzOptions]="languageOptions"
-        ></nz-select>
-      </div>
-    </div>
-  </nz-header>
-  <nz-content>
-    <nz-space nzDirection="vertical" nzSize="large" style="width: 100%; padding: 24px">
+<nz-space nzDirection="vertical" nzSize="large" style="width: 100%; padding: 24px">
       <form nz-form class="search-form">
         <nz-row [nzGutter]="24">
           <nz-col nzSpan="8">
@@ -152,6 +136,3 @@
         }
       </nz-tabs>
     </nz-space>
-  </nz-content>
-  <nz-footer>AWD 257025507 &copy; 2025</nz-footer>
-</nz-layout>

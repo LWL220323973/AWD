@@ -1,0 +1,68 @@
+nz-layout {
+  min-height: 100vh;
+  background-color: white;
+}
+
+nz-header {
+  padding: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.header_title{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 20px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+.header_title_h1{
+  color: white;
+  font-size: 30px;
+  line-height: 64px;
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* Language Selector */
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.language-selector:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: #002fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+}
+
+.language-icon {
+  color: #667eea;
+  font-size: 18px;
+}
+
+
+/*content*/
+nz-content {
+  margin: 24px;
+}
+
+/*footer*/
+nz-footer {
+  text-align: center;
+  background-color: #555555;
+  font-size: 20px;
+  color: white;
+}

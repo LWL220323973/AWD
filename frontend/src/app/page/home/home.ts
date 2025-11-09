@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { RouterLink, RouterOutlet } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -16,12 +14,8 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
-import { select } from '../../api/select';
-
-interface LanguageOption {
-  value: string;
-  label: string;
-}
+import { LanguageService } from '../../services/languageService';
+import {select} from '../../api/select'
 
 interface districtOption {
   value: string;
@@ -29,7 +23,7 @@ interface districtOption {
 }
 
 @Component({
-  selector: 'app-root',
+  selector: 'router-outlet',
   imports: [
     CommonModule,
     NzLayoutModule,
@@ -50,12 +44,24 @@ interface districtOption {
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class App implements OnInit {
-  selectedLanguage: string = 'en-US';
-  translations: any = {};
-  isLoading: boolean = true;
+export class Home implements OnInit {
+  constructor(private language: LanguageService) {}
 
-  // Form control properties
+  ngOnInit() {
+    this.language.selectedLanguage$.subscribe((lang) => {
+      console.log('Language changed to:', lang);
+      this.updateOptions(); // refresh options on language change
+      this.onSubmit();
+    });
+
+    //listen to translation changes
+    this.language.translations.subscribe((translations) => {
+      this.updateOptions();
+      this.onSubmit();
+    });
+  }
+
+  // Form Itemss
   location: string = '';
   selectedDistrict: string = '';
   address: string = '';
@@ -63,60 +69,40 @@ export class App implements OnInit {
   closingHour: Date | null = null;
   selectedWeekdays: string[] = [];
 
-  languageOptions: LanguageOption[] = [
-    { value: 'en-US', label: 'English' },
-    { value: 'zh-TW', label: '繁體中文' },
-    { value: 'zh-CN', label: '简体中文' },
-  ];
-
+  //select options
   districtOptions: districtOption[] = [];
-  weekdayOptions: NzCheckboxOption[] = [];
-
-  constructor(private http: HttpClient) {}
-
+  weekdayOptions: any[] = [];
   searchData: any[] = [];
 
-  ngOnInit() {
-    this.loadLanguage(this.selectedLanguage);
-    this.onSubmit();
+  // Translation method - uses LanguageService
+  getTranslation(key: string): string {
+    return this.language.getTranslation(key);
   }
 
-  // Load language JSON file
-  loadLanguage(language: string): void {
-    this.isLoading = true;
-    const languageFile = `/language/${language}.json`;
-
-    this.http.get(languageFile).subscribe({
-      next: (data) => {
-        this.translations = data;
-        this.updateOptions(); // Update dropdown options after loading translations
-        this.isLoading = false;
-        console.log(`Language ${language} loaded successfully`);
-      },
-      error: (error) => {
-        console.error(`Failed to load language file: ${languageFile}`, error);
-        this.isLoading = false;
-        // Fallback to default translations
-        this.translations = {
-          title: 'Mobile Post Office',
-          welcome: 'Welcome',
-          description: 'Mobile Post Office System',
-          footer: 'AWD ©2025 Created by 257025507',
-        };
-        this.updateOptions(); // Update options even with fallback translations
-      },
-    });
+  getDayOfWeekData(dayofWeek: number | string) {
+    return this.searchData.filter((item: any) => item.day_of_week_code === dayofWeek);
   }
 
-  // Language change handler
-  onLanguageChange(language: string): void {
-    this.selectedLanguage = language;
-    console.log('Language changed to:', language);
-    this.loadLanguage(language);
-    this.onSubmit();
+  // Reset form handler
+  onReset(): void {
+    this.location = '';
+    this.selectedDistrict = '';
+    this.address = '';
+    this.openHour = null;
+    this.closingHour = null;
+    this.selectedWeekdays = [];
+    console.log('Form has been reset');
+    // this.onSubmit();
   }
 
-  // Update options after language loading
+  clearLocation(): void {
+    this.location = '';
+  }
+
+  clearAddress(): void {
+    this.address = '';
+  }
+
   updateOptions(): void {
     this.districtOptions = [
       { value: 'Central & Western', label: this.getTranslation('Central & Western') },
@@ -148,31 +134,6 @@ export class App implements OnInit {
     ];
   }
 
-  // Helper method to get translation
-  getTranslation(key: string): string {
-    return this.translations[key] || key;
-  }
-
-  // Reset form handler
-  onReset(): void {
-    this.location = '';
-    this.selectedDistrict = '';
-    this.address = '';
-    this.openHour = null;
-    this.closingHour = null;
-    this.selectedWeekdays = [];
-    console.log('Form has been reset');
-    this.onSubmit();
-  }
-
-  clearLocation(): void {
-    this.location = '';
-  }
-
-  clearAddress(): void {
-    this.address = '';
-  }
-
   async onSubmit(): Promise<void> {
     const searchItems = {
       location: this.location.trim() ? this.location.trim() : undefined,
@@ -180,7 +141,7 @@ export class App implements OnInit {
       address: this.address.trim() ? this.address.trim() : undefined,
       openHour: this.openHour ? this.openHour.toTimeString().slice(0, 5) : undefined,
       closingHour: this.closingHour ? this.closingHour.toTimeString().slice(0, 5) : undefined,
-      currentLanguage: this.selectedLanguage,
+      currentLanguage: this.language.currentLanguage,
     };
     console.log('Submitting search with items:', searchItems);
     try {
@@ -204,9 +165,5 @@ export class App implements OnInit {
       console.error('Search failed:', error);
       this.searchData = [];
     }
-  }
-
-  getDayOfWeekData(dayofWeek: number | string) {
-    return this.searchData.filter((item) => item.day_of_week_code === dayofWeek);
   }
 }
