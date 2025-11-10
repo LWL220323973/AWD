@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -54,7 +55,7 @@ interface mobilePostOffice {
   styleUrl: './home.css',
 })
 export class Home implements OnInit {
-  constructor(private language: LanguageService) {}
+  constructor(private language: LanguageService, private router: Router) {}
 
   ngOnInit() {
     this.language.selectedLanguage$.subscribe(async (lang) => {
@@ -217,5 +218,9 @@ export class Home implements OnInit {
       console.error('Failed to fetch Mobile Post Office Names:', error);
       return [];
     }
+  }
+
+  navigateInsert(): void{
+    this.router.navigate(['/insert']);
   }
 }
