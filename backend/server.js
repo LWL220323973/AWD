@@ -72,7 +72,6 @@ server.get("/api/selectMobilePostOfficeName", (req, res) => {
   selectMobileOfficeName(searchParams, res);
 });
 
-
 //
 //SQL functions
 //
@@ -231,7 +230,8 @@ function selectMobileOfficeByID(searchParams, res) {
 
 //Select mobile office name
 function selectMobileOfficeName(searchParams, res) {
-  const sql = "SELECT mobile_code, name_tc, name_sc, name_en FROM `post_mobile_office` GROUP BY name_tc, name_sc, name_en";
+  const sql =
+    "SELECT mobile_code, name_tc, name_sc, name_en FROM `post_mobile_office` GROUP BY name_tc, name_sc, name_en";
   conn.query(sql, (err, results) => {
     if (err) {
       console.error("Error selecting mobile office names:", err);
@@ -271,63 +271,62 @@ function initializeFileOperations() {
           console.error("Error creating table:", err);
           return;
         }
+        fs.readdir("../datasource", (err, files) => {
+          if (err) {
+            console.error("Error reading directory:", err);
+            return;
+          }
+          files.forEach((file) => {
+            if (file.endsWith(".json")) {
+              fs.readFile(`../datasource/${file}`, "utf8", (err, data) => {
+                if (err) {
+                  console.error("Error reading JSON file:", err);
+                  return;
+                }
+                try {
+                  const jsonData = JSON.parse(data);
+                  const lastUpdateTime = jsonData.lastUpdateDate;
+                  jsonData.data.forEach((item) => {
+                    const sql =
+                      "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`, `seq`,`last_update_time`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    const values = [
+                      item.mobileCode,
+                      item.locationTC,
+                      item.locationSC,
+                      item.locationEN,
+                      item.addressTC,
+                      item.addressSC,
+                      item.addressEN,
+                      item.nameTC,
+                      item.nameSC,
+                      item.nameEN,
+                      item.districtTC,
+                      item.districtSC,
+                      item.districtEN,
+                      item.openHour,
+                      item.closeHour,
+                      item.dayOfWeekCode,
+                      item.latitude,
+                      item.longitude,
+                      item.seq,
+                      lastUpdateTime,
+                    ];
+                    conn.query(sql, values, (err, results) => {
+                      if (err) {
+                        console.error("Error inserting data:", err);
+                        return;
+                      }
+                      // console.log("Data inserted successfully: ", values);
+                    });
+                  });
+                } catch (parseErr) {
+                  console.error("Error parsing JSON:", parseErr);
+                }
+              });
+            }
+          });
+        });
       });
     }
   );
-
-  fs.readdir("../datasource", (err, files) => {
-    if (err) {
-      console.error("Error reading directory:", err);
-      return;
-    }
-    files.forEach((file) => {
-      if (file.endsWith(".json")) {
-        fs.readFile(`../datasource/${file}`, "utf8", (err, data) => {
-          if (err) {
-            console.error("Error reading JSON file:", err);
-            return;
-          }
-          try {
-            const jsonData = JSON.parse(data);
-            const lastUpdateTime = jsonData.lastUpdateDate;
-            jsonData.data.forEach((item) => {
-              const sql =
-                "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`, `seq`,`last_update_time`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-              const values = [
-                item.mobileCode,
-                item.locationTC,
-                item.locationSC,
-                item.locationEN,
-                item.addressTC,
-                item.addressSC,
-                item.addressEN,
-                item.nameTC,
-                item.nameSC,
-                item.nameEN,
-                item.districtTC,
-                item.districtSC,
-                item.districtEN,
-                item.openHour,
-                item.closeHour,
-                item.dayOfWeekCode,
-                item.latitude,
-                item.longitude,
-                item.seq,
-                lastUpdateTime,
-              ];
-              conn.query(sql, values, (err, results) => {
-                if (err) {
-                  console.error("Error inserting data:", err);
-                  return;
-                }
-                // console.log("Data inserted successfully: ", values);
-              });
-            });
-          } catch (parseErr) {
-            console.error("Error parsing JSON:", parseErr);
-          }
-        });
-      }
-    });
-  });
 }
