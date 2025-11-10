@@ -31,5 +31,7 @@
   "Friday": "星期五",
   "clear": "清除",
   "No data": "未找到数据",
-  "Add" : "添加"
+  "Add" : "添加",
+  "AddOffice": "添加流动邮政局",
+  "AddOfficeLocation": "添加流动邮政局地点"
 }

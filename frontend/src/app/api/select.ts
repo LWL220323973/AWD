@@ -14,3 +14,19 @@ export function select(value: any) {
     return axios.get(`${apiUrl}selectMobileOfficeBySimplifiedChinese`, { params });
   }
 }
+
+export function selectByID(id: number) {
+  const params = { id };
+  return axios.get(`${apiUrl}selectMobilePostOfficeByID`, { params });
+}
+
+export function selectMobilePostOfficeName() {
+  return axios.get(`${apiUrl}selectMobilePostOfficeName`);
+}
+
+export function selectMobilePostOffice(value: any) {
+  const params = {
+    ...value,
+  };
+  return axios.get(`${apiUrl}selectMobilePostOffice`, { params });
+}

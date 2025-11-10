@@ -8,18 +8,25 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzGridModule } from 'ng-zorro-antd/grid';
-import { NzCheckboxModule, NzCheckboxOption } from 'ng-zorro-antd/checkbox';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzFloatButtonModule } from 'ng-zorro-antd/float-button';
+import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { LanguageService } from '../../services/languageService';
-import {select} from '../../api/select'
+import { selectMobilePostOffice, selectMobilePostOfficeName } from '../../api/select';
 
 interface districtOption {
   value: string;
   label: string;
+}
+
+interface mobilePostOffice {
+  name: string;
+  code: string;
 }
 
 @Component({
@@ -34,12 +41,14 @@ interface districtOption {
     NzInputModule,
     NzTimePickerModule,
     NzGridModule,
-    NzCheckboxModule,
     NzButtonModule,
     NzTableModule,
     NzSpaceModule,
     NzTabsModule,
     NzEmptyModule,
+    NzCollapseModule,
+    NzFloatButtonModule,
+    NzTooltipModule,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',
@@ -48,16 +57,19 @@ export class Home implements OnInit {
   constructor(private language: LanguageService) {}
 
   ngOnInit() {
-    this.language.selectedLanguage$.subscribe((lang) => {
+    this.language.selectedLanguage$.subscribe(async (lang) => {
       console.log('Language changed to:', lang);
+      this.currentLanguage = lang;
       this.updateOptions(); // refresh options on language change
       this.onSubmit();
+      this.postOfficeNames = await this.mobilePostOfficeName();
     });
 
     //listen to translation changes
-    this.language.translations.subscribe((translations) => {
+    this.language.translations.subscribe(async (translations) => {
       this.updateOptions();
       this.onSubmit();
+      this.postOfficeNames = await this.mobilePostOfficeName();
     });
   }
 
@@ -69,10 +81,13 @@ export class Home implements OnInit {
   closingHour: Date | null = null;
   selectedWeekdays: string[] = [];
 
+  currentLanguage: string = '';
   //select options
   districtOptions: districtOption[] = [];
   weekdayOptions: any[] = [];
+
   searchData: any[] = [];
+  postOfficeNames: mobilePostOffice[] = [];
 
   // Translation method - uses LanguageService
   getTranslation(key: string): string {
@@ -81,6 +96,20 @@ export class Home implements OnInit {
 
   getDayOfWeekData(dayofWeek: number | string) {
     return this.searchData.filter((item: any) => item.day_of_week_code === dayofWeek);
+  }
+
+  getPostOfficeNamesForDayOfWeek(dayOfWeek: number | string): mobilePostOffice[] {
+    // get the mobile_code of the dayOfWeek
+    const mobileCodes = this.searchData
+      .filter((item: any) => item.day_of_week_code === dayOfWeek)
+      .map((item: any) => item.mobile_code);
+    return this.postOfficeNames.filter((office) => mobileCodes.includes(office.code));
+  }
+
+  getDataForMobileCodeAndDayOfWeek(mobile_code: string, dayOfWeek: number | string) {
+    return this.searchData
+      .filter((item: any) => item.day_of_week_code === dayOfWeek)
+      .filter((item: any) => item.mobile_code === mobile_code);
   }
 
   // Reset form handler
@@ -92,7 +121,7 @@ export class Home implements OnInit {
     this.closingHour = null;
     this.selectedWeekdays = [];
     console.log('Form has been reset');
-    // this.onSubmit();
+    this.onSubmit();
   }
 
   clearLocation(): void {
@@ -141,11 +170,10 @@ export class Home implements OnInit {
       address: this.address.trim() ? this.address.trim() : undefined,
       openHour: this.openHour ? this.openHour.toTimeString().slice(0, 5) : undefined,
       closingHour: this.closingHour ? this.closingHour.toTimeString().slice(0, 5) : undefined,
-      currentLanguage: this.language.currentLanguage,
     };
     console.log('Submitting search with items:', searchItems);
     try {
-      const response = await select(searchItems);
+      const response = await selectMobilePostOffice(searchItems);
 
       // Extract the actual data array from backend response
       if (response.data && response.data.success && Array.isArray(response.data.data)) {
@@ -164,6 +192,30 @@ export class Home implements OnInit {
     } catch (error) {
       console.error('Search failed:', error);
       this.searchData = [];
+    }
+  }
+  async mobilePostOfficeName(): Promise<any[]> {
+    try {
+      const response = await selectMobilePostOfficeName();
+      if (this.currentLanguage === 'en-US') {
+        return response.data.data.map((item: any) => ({
+          name: item.name_en,
+          code: item.mobile_code,
+        }));
+      } else if (this.currentLanguage === 'zh-TW') {
+        return response.data.data.map((item: any) => ({
+          name: item.name_tc,
+          code: item.mobile_code,
+        }));
+      } else {
+        return response.data.data.map((item: any) => ({
+          name: item.name_sc,
+          code: item.mobile_code,
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch Mobile Post Office Names:', error);
+      return [];
     }
   }
 }

@@ -1,122 +1,125 @@
 <nz-space nzDirection="vertical" nzSize="large" style="width: 100%; padding: 24px">
-      <form nz-form class="search-form">
-        <nz-row [nzGutter]="24">
-          <nz-col nzSpan="8">
-            <nz-form-item>
-              <nz-form-label>{{ getTranslation('location') }}</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="clearLocationTemplate">
-                  <input nz-input [attr.id]="'location'" [(ngModel)]="location" name="location" />
-                </nz-input-group>
-                <ng-template #clearLocationTemplate>
-                  @if (location && location.length > 0) {
-                  <nz-icon
-                    nzType="close"
-                    nzTheme="outline"
-                    (click)="clearLocation()"
-                    style="cursor: pointer"
-                  >
-                  </nz-icon>
-                  }
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-          </nz-col>
-          <nz-col nzSpan="5">
-            <nz-form-item>
-              <nz-form-label>{{ getTranslation('district') }}</nz-form-label>
-              <nz-form-control>
-                <nz-select
-                  nzAllowClear
-                  [nzOptions]="districtOptions"
-                  [attr.id]="'district'"
-                  [(ngModel)]="selectedDistrict"
-                  name="district"
-                ></nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </nz-col>
-          <nz-col>
-            <nz-form-item>
-              <nz-form-label>{{ getTranslation('officeHours') }}</nz-form-label>
-              <nz-form-control>
-                <nz-time-picker
-                  [attr.id]="'openHour'"
-                  [nzFormat]="'HH:mm'"
-                  [nzAllowEmpty]
-                  [(ngModel)]="openHour"
-                  name="openHour"
-                ></nz-time-picker>
-                -
-                <nz-time-picker
-                  [attr.id]="'closingHour'"
-                  [nzFormat]="'HH:mm'"
-                  [(ngModel)]="closingHour"
-                  name="closingHour"
-                ></nz-time-picker>
-              </nz-form-control>
-            </nz-form-item>
-          </nz-col>
-        </nz-row>
-
-        <nz-row [nzGutter]="24">
-          <nz-col nzSpan="19">
-            <nz-form-item>
-              <nz-form-label>{{ getTranslation('address') }}</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="clearAddressTemplate">
-                  <input nz-input [attr.id]="'address'" [(ngModel)]="address" name="address" />
-                </nz-input-group>
-                <ng-template #clearAddressTemplate>
-                  @if (address && address.length > 0) {
-                  <nz-icon
-                    nzType="close"
-                    nzTheme="outline"
-                    (click)="clearAddress()"
-                    style="cursor: pointer"
-                  >
-                  </nz-icon>
-                  }
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-          </nz-col>
-          <nz-col nzSpan="">
-            <nz-form-control>
-              <button
-                nz-button
-                nzType="default"
-                style="margin-right: 8px"
-                (click)="onReset()"
-                nzShape="round"
+  <form nz-form class="search-form">
+    <nz-row [nzGutter]="24">
+      <nz-col nzSpan="8">
+        <nz-form-item>
+          <nz-form-label>{{ getTranslation('location') }}</nz-form-label>
+          <nz-form-control>
+            <nz-input-group [nzSuffix]="clearLocationTemplate">
+              <input nz-input [attr.id]="'location'" [(ngModel)]="location" name="location" />
+            </nz-input-group>
+            <ng-template #clearLocationTemplate>
+              @if (location && location.length > 0) {
+              <nz-icon
+                nzType="close"
+                nzTheme="outline"
+                (click)="clearLocation()"
+                style="cursor: pointer"
               >
-                <nz-icon nzType="clear" nzTheme="outline" />
-                {{ getTranslation('clear') }}
-              </button>
-              <button nz-button nzType="primary" nzShape="round" (click)="onSubmit()">
-                {{ getTranslation('submit') }}
-              </button>
-            </nz-form-control>
-          </nz-col>
-        </nz-row>
-      </form>
-      <nz-tabs nzType="card" class="weekdayTab" [nzAnimated]="false">
-        @for (weekDay of weekdayOptions;track weekDay){
-        <nz-tab [nzTitle]="weekDay.label">
+              </nz-icon>
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col nzSpan="5">
+        <nz-form-item>
+          <nz-form-label>{{ getTranslation('district') }}</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              nzAllowClear
+              [nzOptions]="districtOptions"
+              [attr.id]="'district'"
+              [(ngModel)]="selectedDistrict"
+              name="district"
+            ></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col>
+        <nz-form-item>
+          <nz-form-label>{{ getTranslation('officeHours') }}</nz-form-label>
+          <nz-form-control>
+            <nz-time-picker
+              [attr.id]="'openHour'"
+              [nzFormat]="'HH:mm'"
+              [nzAllowEmpty]
+              [(ngModel)]="openHour"
+              name="openHour"
+            ></nz-time-picker>
+            -
+            <nz-time-picker
+              [attr.id]="'closingHour'"
+              [nzFormat]="'HH:mm'"
+              [(ngModel)]="closingHour"
+              name="closingHour"
+            ></nz-time-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+
+    <nz-row [nzGutter]="24">
+      <nz-col nzSpan="19">
+        <nz-form-item>
+          <nz-form-label>{{ getTranslation('address') }}</nz-form-label>
+          <nz-form-control>
+            <nz-input-group [nzSuffix]="clearAddressTemplate">
+              <input nz-input [attr.id]="'address'" [(ngModel)]="address" name="address" />
+            </nz-input-group>
+            <ng-template #clearAddressTemplate>
+              @if (address && address.length > 0) {
+              <nz-icon
+                nzType="close"
+                nzTheme="outline"
+                (click)="clearAddress()"
+                style="cursor: pointer"
+              >
+              </nz-icon>
+              }
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col nzSpan="">
+        <nz-form-control>
+          <button
+            nz-button
+            nzType="default"
+            style="margin-right: 8px"
+            (click)="onReset()"
+            nzShape="round"
+          >
+            <nz-icon nzType="clear" nzTheme="outline" />
+            {{ getTranslation('clear') }}
+          </button>
+          <button nz-button nzType="primary" nzShape="round" (click)="onSubmit()">
+            {{ getTranslation('submit') }}
+          </button>
+        </nz-form-control>
+      </nz-col>
+    </nz-row>
+  </form>
+  <nz-tabs nzType="card" class="weekdayTab" [nzAnimated]="false" nzCentered>
+    @for (weekDay of weekdayOptions;track weekDay){
+    <nz-tab [nzTitle]="weekDay.label">
+      <nz-collapse [nzExpandIconPosition]="'end'">
+        @if (getPostOfficeNamesForDayOfWeek(weekDay.value).length === 0) {
+        <nz-empty [nzNotFoundContent]="getTranslation('No data')"></nz-empty>
+        } @for (officeName of getPostOfficeNamesForDayOfWeek(weekDay.value);track officeName){
+
+        <nz-collapse-panel [nzHeader]="officeName.name">
           <nz-table
             #searchTable
-            [nzData]="getDayOfWeekData(weekDay.value)"
+            [nzData]="getDataForMobileCodeAndDayOfWeek(officeName.code, weekDay.value)"
             nzTableLayout="fixed"
-            [nzNoResult]="noDataTemplate"
+            [nzShowPagination]="false"
           >
-            <ng-template #noDataTemplate>
-              <nz-empty [nzNotFoundContent]="getTranslation('No data')"></nz-empty>
-            </ng-template>
             <thead>
               <tr>
                 <!-- <th>{{ getTranslation('name') }}</th> -->
-                <th>{{ getTranslation('location') }}</th>
                 <th>{{ getTranslation('district') }}</th>
+                <th>{{ getTranslation('location') }}</th>
                 <th>{{ getTranslation('address') }}</th>
                 <th>{{ getTranslation('officeHours') }}</th>
                 <th></th>
@@ -125,14 +128,47 @@
             <tbody>
               <tr *ngFor="let data of searchTable.data">
                 <!-- <td>{{ data.name }}</td> -->
-                <td>{{ data.location_en || data.location_sc || data.location_tc }}</td>
-                <td>{{ data.district_en || data.district_sc || data.district_tc }}</td>
-                <td>{{ data.address_en || data.address_sc || data.address_tc }}</td>
+                <td>
+                  {{
+                    currentLanguage === 'en-US'
+                      ? data.district_en
+                      : currentLanguage === 'zh-TW'
+                      ? data.district_tc
+                      : data.district_sc
+                  }}
+                </td>
+                <td>
+                  {{
+                    currentLanguage === 'en-US'
+                      ? data.location_en
+                      : currentLanguage === 'zh-TW'
+                      ? data.location_tc
+                      : data.location_sc
+                  }}
+                </td>
+                <td>
+                  {{
+                    currentLanguage === 'en-US'
+                      ? data.address_en
+                      : currentLanguage === 'zh-TW'
+                      ? data.address_tc
+                      : data.address_sc
+                  }}
+                </td>
                 <td>{{ data.open_hour }} - {{ data.close_hour }}</td>
               </tr>
             </tbody>
           </nz-table>
-        </nz-tab>
+        </nz-collapse-panel>
         }
-      </nz-tabs>
-    </nz-space>
+      </nz-collapse>
+    </nz-tab>
+    }
+  </nz-tabs>
+  <nz-float-button
+    nzType="primary"
+    nzIcon="plus"
+    nz-tooltip
+    nzTooltipTitle="{{ getTranslation('Add') }}"
+  ></nz-float-button>
+</nz-space>
