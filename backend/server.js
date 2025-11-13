@@ -176,12 +176,12 @@ function selectMobileOffice(searchParams, res) {
   }
 
   if (searchParams.openHour !== undefined) {
-    sql += " AND open_hour >= ? ";
+    sql += " AND open_hour <= ? ";
     values.push(searchParams.openHour);
   }
 
   if (searchParams.closeHour !== undefined) {
-    sql += " AND close_hour <= ? ";
+    sql += " AND close_hour >= ? ";
     values.push(searchParams.closeHour);
   }
 
