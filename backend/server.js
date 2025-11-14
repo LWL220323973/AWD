@@ -164,8 +164,6 @@ function selectMobileOffice(searchParams, res) {
   if (searchParams.district !== undefined) {
     sql += " AND district_en = ?";
     values.push(searchParams.district.trim());
-    values.push(searchParams.district.trim());
-    values.push(searchParams.district.trim());
   }
 
   if (searchParams.address !== undefined) {
