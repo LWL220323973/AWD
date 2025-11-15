@@ -121,13 +121,22 @@ function insertPostMobileOffice(officeInfo) {
     longitude,
     seq,
   ];
-  conn.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Error inserting data:", err);
-      return;
-    }
-    console.log("Data inserted successfully: ", values);
-  });
+  if (values.includes(undefined) || values.includes("")) {
+    res.status(444).json({
+      error: "Missing or invalid parameters",
+      details: "All fields are required",
+      message: "Please provide valid values for all parameters",
+    });
+    return;
+  } else {
+    conn.query(sql, values, (err, results) => {
+      if (err) {
+        console.error("Error inserting data:", err);
+        return;
+      }
+      console.log("Data inserted successfully: ", values);
+    });
+  }
 }
 
 // Delete mobile office by officeID
@@ -224,7 +233,9 @@ function selectMobilePostOffice(searchParams, res) {
     res.status(444).json({
       error: "Missing or invalid search parameters",
       details: errParams,
-      message: "Please provide valid values for the listed parameters" + errParams.join(", "),
+      message:
+        "Please provide valid values for the listed parameters: " +
+        errParams.join(", "),
     });
     return;
   } else {
