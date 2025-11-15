@@ -46,30 +46,29 @@ conn.connect((err) => {
 });
 
 // Insert mobile office
-server.post("/api/insertMobileOffice", (req, res) => {});
+server.post("/api/insertMobilePostOffice", (req, res) => {});
 
 // Delete mobile office by officeID
-server.delete("/api/deleteMobileOffice", (req, res) => {});
+server.delete("/api/deleteMobilePostOffice", (req, res) => {});
 
 // Update mobile office by officeID
-server.put("/api/updateMobileOffice", (req, res) => {});
+server.put("/api/updateMobilePostOffice", (req, res) => {});
 
 //select mobile office
 server.get("/api/selectMobilePostOffice", (req, res) => {
   const searchParams = req.query ? req.query : "";
-  selectMobileOffice(searchParams, res);
+  selectMobilePostOffice(searchParams, res);
 });
 
 //Select mobile office by ID
 server.get("/api/selectMobilePostOfficeByID", (req, res) => {
   const searchParams = req.query ? req.query : "";
-  selectMobileOfficeByID(searchParams, res);
+  selectMobilePostOfficeByID(searchParams, res);
 });
 
 //Select mobile office name
 server.get("/api/selectMobilePostOfficeName", (req, res) => {
-  const searchParams = req.query ? req.query : "";
-  selectMobileOfficeName(searchParams, res);
+  selectMobilePostOfficeName(res);
 });
 
 //
@@ -132,23 +131,36 @@ function insertPostMobileOffice(officeInfo) {
 }
 
 // Delete mobile office by officeID
-function deleteMobileOffice(officeID) {
+function deleteMobilePostOffice(officeID) {
   const sql = "DELETE FROM `post_mobile_office` WHERE id = ?";
   const values = [officeID];
-  conn.query(sql, values, (err, results) => {
+  conn.query(sql, values, (err, res) => {
+    if (officeID === undefined || officeID.trim() === "") {
+      res.status(444).json({
+        details: "officeID",
+        message: "Please provide a valid value for the officeID parameter",
+        error: "Missing officeID parameter",
+      });
+      return;
+    }
     if (err) {
       console.error("Error deleting data:", err);
       return;
     }
+    res.json({
+      success: true,
+      details: officeID,
+      message: "Data deleted successfully for officeID: " + officeID,
+    });
     console.log("Data deleted successfully for officeID: ", officeID);
   });
 }
 
 // Update mobile office by officeID
-function updateMobileOffice(officeID, officeInfo) {}
+function updateMobilePostOffice(officeID, officeInfo) {}
 
 //Select mobile office
-function selectMobileOffice(searchParams, res) {
+function selectMobilePostOffice(searchParams, res) {
   let sql = "SELECT * FROM `post_mobile_office` WHERE 1=1 ";
   const values = [];
 
@@ -205,10 +217,18 @@ function selectMobileOffice(searchParams, res) {
 }
 
 //Select mobile office by ID
-function selectMobileOfficeByID(searchParams, res) {
+function selectMobilePostOfficeByID(searchParams, res) {
   const sql = "SELECT * FROM `post_mobile_office` WHERE id = ?";
   const values = [searchParams.id];
   conn.query(sql, values, (err, results) => {
+    if (values[0] === undefined || values[0].trim() === "") {
+      res.status(444).json({
+        error: "Missing search parameter",
+        details: "ID",
+        message: "Please provide a valid value for the ID parameter",
+      });
+      return;
+    }
     if (err) {
       console.error("Error selecting data by ID:", err);
       res.status(500).json({
@@ -227,7 +247,7 @@ function selectMobileOfficeByID(searchParams, res) {
 }
 
 //Select mobile office name
-function selectMobileOfficeName(searchParams, res) {
+function selectMobilePostOfficeName(res) {
   const sql =
     "SELECT mobile_code, name_tc, name_sc, name_en FROM `post_mobile_office` GROUP BY name_tc, name_sc, name_en";
   conn.query(sql, (err, results) => {
@@ -237,12 +257,13 @@ function selectMobileOfficeName(searchParams, res) {
         .status(500)
         .json({ error: "Database query failed", details: err.message });
       return;
+    } else {
+      res.json({
+        success: true,
+        data: results,
+        message: "Selected office names success",
+      });
     }
-    res.json({
-      success: true,
-      data: results,
-      message: "Selected office names success",
-    });
   });
 }
 
