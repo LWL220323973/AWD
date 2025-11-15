@@ -163,57 +163,88 @@ function updateMobilePostOffice(officeID, officeInfo) {}
 function selectMobilePostOffice(searchParams, res) {
   let sql = "SELECT * FROM `post_mobile_office` WHERE 1=1 ";
   const values = [];
+  const errParams = [];
 
   // Add search conditions
   if (searchParams.location !== undefined) {
-    sql +=
-      " AND (location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?)";
-    values.push(`%${searchParams.location}%`);
-    values.push(`%${searchParams.location}%`);
-    values.push(`%${searchParams.location}%`);
+    if (searchParams.location.trim() === "") {
+      errParams.push("location");
+    } else {
+      sql +=
+        " AND (location_en LIKE ? OR location_tc LIKE ? OR location_sc LIKE ?)";
+      values.push(`%${searchParams.location}%`);
+      values.push(`%${searchParams.location}%`);
+      values.push(`%${searchParams.location}%`);
+    }
   }
 
   if (searchParams.district !== undefined) {
-    sql += " AND district_en = ?";
-    values.push(searchParams.district.trim());
+    if (searchParams.district.trim() === "") {
+      errParams.push("district");
+    } else {
+      sql += " AND district_en = ?";
+      values.push(searchParams.district.trim());
+    }
   }
 
   if (searchParams.address !== undefined) {
-    sql += " AND (address_en LIKE ? OR address_tc LIKE ? OR address_sc LIKE ?)";
-    values.push(`%${searchParams.address.trim()}%`);
-    values.push(`%${searchParams.address.trim()}%`);
-    values.push(`%${searchParams.address.trim()}%`);
+    if (searchParams.address.trim() === "") {
+      errParams.push("address");
+    } else {
+      sql +=
+        " AND (address_en LIKE ? OR address_tc LIKE ? OR address_sc LIKE ?)";
+      values.push(`%${searchParams.address.trim()}%`);
+      values.push(`%${searchParams.address.trim()}%`);
+      values.push(`%${searchParams.address.trim()}%`);
+    }
   }
 
   if (searchParams.openHour !== undefined) {
-    sql += " AND open_hour <= ? ";
-    values.push(searchParams.openHour);
+    if (searchParams.openHour.trim() === "") {
+      errParams.push("openHour");
+    } else {
+      sql += " AND open_hour <= ? ";
+      values.push(searchParams.openHour);
+    }
   }
 
   if (searchParams.closeHour !== undefined) {
-    sql += " AND close_hour >= ? ";
-    values.push(searchParams.closeHour);
+    if (searchParams.closeHour.trim() === "") {
+      errParams.push("closeHour");
+    } else {
+      sql += " AND close_hour >= ? ";
+      values.push(searchParams.closeHour);
+    }
   }
 
   console.log("Executing SQL:", sql);
   console.log("With values:", values);
 
-  conn.query(sql, values, (err, results) => {
-    if (err) {
-      console.error("Error selecting data:", err);
-      res.status(500).json({
-        error: "Database query failed",
-        details: err.message,
-        message: "Selected Error",
-      });
-      return;
-    }
-    res.json({
-      success: true,
-      data: results,
-      message: "Selected records " + results.length,
+  if (errParams.length > 0) {
+    res.status(444).json({
+      error: "Missing or invalid search parameters",
+      details: errParams,
+      message: "Please provide valid values for the listed parameters" + errParams.join(", "),
     });
-  });
+    return;
+  } else {
+    conn.query(sql, values, (err, results) => {
+      if (err) {
+        console.error("Error selecting data:", err);
+        res.status(500).json({
+          error: "Database query failed",
+          details: err.message,
+          message: "Selected Error",
+        });
+        return;
+      }
+      res.json({
+        success: true,
+        data: results,
+        message: "Selected records " + results.length,
+      });
+    });
+  }
 }
 
 //Select mobile office by ID
