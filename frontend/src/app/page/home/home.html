@@ -89,11 +89,12 @@
             style="margin-right: 8px"
             (click)="onReset()"
             nzShape="round"
+            name="btnReset"
           >
             <nz-icon nzType="clear" nzTheme="outline" />
             {{ getTranslation('clear') }}
           </button>
-          <button nz-button nzType="primary" nzShape="round" (click)="onSubmit()">
+          <button nz-button nzType="primary" nzShape="round" (click)="onSubmit()" name="btnSearch">
             <nz-icon nzType="search" nzTheme="outline" />
             {{ getTranslation('search') }}
           </button>
@@ -157,6 +158,22 @@
                   }}
                 </td>
                 <td>{{ data.open_hour }} - {{ data.close_hour }}</td>
+                <td>
+                  <button nz-button nzType="primary" name="btnEdit">
+                    <nz-icon nzType="edit" nzTheme="outline" />
+                    {{ getTranslation('edit') }}
+                  </button>
+                  <button
+                    nz-button
+                    nzType="primary"
+                    name="btnDelete"
+                    nzDanger
+                    (click)="onOpenModal(data.id)"
+                  >
+                    <nz-icon nzType="delete" nzTheme="outline" />
+                    {{ getTranslation('delete') }}
+                  </button>
+                </td>
               </tr>
             </tbody>
           </nz-table>
@@ -166,6 +183,19 @@
     </nz-tab>
     }
   </nz-tabs>
+  <nz-modal
+    nzTitle="{{ getTranslation('confirmDeleteModal') }}"
+    [(nzVisible)]="isNzModalVisible"
+    (nzOnCancel)="handleCancel()"
+    nzCancelText="{{ getTranslation('cancel') }}"
+    nzOkText="{{ getTranslation('confirm') }}"
+    (nzOnOk)="onDelete(selectedDeleteId)"
+    nzCentered
+  >
+    <ng-container *nzModalContent>
+      <p>{{ getTranslation('confirmDelete') }}</p>
+    </ng-container>
+  </nz-modal>
   <nz-float-button
     nzType="primary"
     nzIcon="plus"

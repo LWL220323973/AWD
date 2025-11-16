@@ -33,5 +33,11 @@
   "No data": "未找到數據",
   "Add" : "新增",
   "AddOffice": "新增流動郵政局",
-  "AddOfficeLocation": "新增流動郵政局地點"
+  "AddOfficeLocation": "新增流動郵政局地點",
+  "edit": "編輯",
+  "delete": "刪除",
+  "confirmDeleteModal": "刪除確認",
+  "confirmDelete": "您確定要刪除此流動郵政局嗎？",
+  "cancel": "取消",
+  "confirm": "確認"
 }

@@ -19,6 +19,8 @@ import { NzFloatButtonModule } from 'ng-zorro-antd/float-button';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
 import { LanguageService } from '../../services/languageService';
 import { selectMobilePostOffice, selectMobilePostOfficeName } from '../../api/select';
+import { deleteMobilePostOffice } from '../../api/delete';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 interface districtOption {
   value: string;
@@ -50,6 +52,7 @@ interface mobilePostOffice {
     NzCollapseModule,
     NzFloatButtonModule,
     NzTooltipModule,
+    NzModalModule,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',
@@ -90,6 +93,9 @@ export class Home implements OnInit {
   searchData: any[] = [];
   postOfficeNames: mobilePostOffice[] = [];
 
+  isNzModalVisible: boolean = false;
+  selectedDeleteId: number = 0;
+
   // Translation method - uses LanguageService
   getTranslation(key: string): string {
     return this.language.getTranslation(key);
@@ -111,18 +117,6 @@ export class Home implements OnInit {
     return this.searchData
       .filter((item: any) => item.day_of_week_code === dayOfWeek)
       .filter((item: any) => item.mobile_code === mobile_code);
-  }
-
-  // Reset form handler
-  onReset(): void {
-    this.location = '';
-    this.selectedDistrict = '';
-    this.address = '';
-    this.openHour = null;
-    this.closingHour = null;
-    this.selectedWeekdays = [];
-    console.log('Form has been reset');
-    this.onSubmit();
   }
 
   clearLocation(): void {
@@ -164,6 +158,37 @@ export class Home implements OnInit {
     ];
   }
 
+  // Reset form handler
+  onReset(): void {
+    this.location = '';
+    this.selectedDistrict = '';
+    this.address = '';
+    this.openHour = null;
+    this.closingHour = null;
+    this.selectedWeekdays = [];
+    console.log('Form has been reset');
+    this.onSubmit();
+  }
+
+  onOpenModal(id: number): void {
+    this.isNzModalVisible = true;
+    this.selectedDeleteId = id;
+  }
+
+  onDelete(id: number): void {
+    console.log('Delete button clicked');
+    deleteMobilePostOffice(id)
+      .then((response) => {
+        console.log('Delete successful:', response.data);
+        // Refresh the data after deletion
+        this.onSubmit();
+        this.isNzModalVisible = false;
+      })
+      .catch((error) => {
+        console.error('Delete failed:', error);
+      });
+  }
+
   async onSubmit(): Promise<void> {
     const searchItems = {
       location: this.location.trim() ? this.location.trim() : undefined,
@@ -195,6 +220,7 @@ export class Home implements OnInit {
       this.searchData = [];
     }
   }
+
   async mobilePostOfficeName(): Promise<any[]> {
     try {
       const response = await selectMobilePostOfficeName();
@@ -220,7 +246,11 @@ export class Home implements OnInit {
     }
   }
 
-  navigateInsert(): void{
+  navigateInsert(): void {
     this.router.navigate(['/insert']);
+  }
+
+  handleCancel(): void {
+    this.isNzModalVisible = false;
   }
 }

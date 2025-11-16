@@ -46,13 +46,23 @@ conn.connect((err) => {
 });
 
 // Insert mobile office
-server.post("/api/insertMobilePostOffice", (req, res) => {});
+server.post("/api/insertMobilePostOffice", (req, res) => {
+  const officeInfo = req.body;
+  insertPostMobileOffice(officeInfo, res);
+});
 
 // Delete mobile office by officeID
-server.delete("/api/deleteMobilePostOffice", (req, res) => {});
+server.delete("/api/deleteMobilePostOffice", (req, res) => {
+  const officeID = req.query.id;
+  deleteMobilePostOffice(officeID, res);
+});
 
 // Update mobile office by officeID
-server.put("/api/updateMobilePostOffice", (req, res) => {});
+server.put("/api/updateMobilePostOffice", (req, res) => {
+  const officeID = req.query.officeID;
+  const officeInfo = req.body;
+  updateMobilePostOffice(officeID, officeInfo, res);
+});
 
 //select mobile office
 server.get("/api/selectMobilePostOffice", (req, res) => {
@@ -76,7 +86,7 @@ server.get("/api/selectMobilePostOfficeName", (req, res) => {
 //
 
 // Insert mobile office
-function insertPostMobileOffice(officeInfo) {
+function insertPostMobileOffice(officeInfo, res) {
   const {
     mobileCode,
     locationTC,
@@ -140,10 +150,10 @@ function insertPostMobileOffice(officeInfo) {
 }
 
 // Delete mobile office by officeID
-function deleteMobilePostOffice(officeID) {
+function deleteMobilePostOffice(officeID, res) {
   const sql = "DELETE FROM `post_mobile_office` WHERE id = ?";
   const values = [officeID];
-  conn.query(sql, values, (err, res) => {
+  conn.query(sql, values, (err) => {
     if (officeID === undefined || officeID.trim() === "") {
       res.status(444).json({
         details: "officeID",
@@ -166,7 +176,9 @@ function deleteMobilePostOffice(officeID) {
 }
 
 // Update mobile office by officeID
-function updateMobilePostOffice(officeID, officeInfo) {}
+function updateMobilePostOffice(officeID, officeInfo) {
+  
+}
 
 //Select mobile office
 function selectMobilePostOffice(searchParams, res) {

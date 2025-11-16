@@ -33,5 +33,11 @@
   "No data": "Not Data Found",
   "Add" : "Add",
   "AddOffice": "Add Mobile Post Office",
-  "AddOfficeLocation": "Add Mobile Post Office Location"
+  "AddOfficeLocation": "Add Mobile Post Office Location",
+  "edit": "Edit",
+  "delete": "Delete",
+  "confirmDeleteModal": "Delete Confirmation",
+  "confirmDelete": "Are you sure you want to delete this mobile post office?",
+  "cancel": "Cancel",
+  "confirm": "Confirm"
 }

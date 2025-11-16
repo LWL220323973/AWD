@@ -31,3 +31,180 @@ nz-table tr:hover {
 nz-table td {
   border-bottom: 1px solid #f0f2f5;
 }
+
+/* Action buttons styling */
+button[name="btnEdit"],
+button[name="btnDelete"] {
+  margin-right: 8px;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  font-weight: 500;
+  min-width: 80px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Edit button specific styling */
+button[name="btnEdit"] {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  border-color: #52c41a;
+}
+
+button[name="btnEdit"]:hover {
+  background: linear-gradient(135deg, #389e0d 0%, #52c41a 100%);
+  border-color: #389e0d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+}
+
+button[name="btnEdit"]:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(82, 196, 26, 0.4);
+}
+
+/* Delete button specific styling */
+button[name="btnDelete"] {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  border-color: #ff4d4f;
+}
+
+button[name="btnDelete"]:hover {
+  background: linear-gradient(135deg, #cf1322 0%, #ff4d4f 100%);
+  border-color: #cf1322;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+}
+
+button[name="btnDelete"]:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(255, 77, 79, 0.4);
+}
+
+/* Icon styling within buttons */
+button[name="btnEdit"] nz-icon,
+button[name="btnDelete"] nz-icon {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+button[name="btnEdit"]:hover nz-icon,
+button[name="btnDelete"]:hover nz-icon {
+  transform: scale(1.1);
+}
+
+/* Responsive design for action buttons */
+@media (max-width: 768px) {
+  button[name="btnEdit"],
+  button[name="btnDelete"] {
+    min-width: 70px;
+    height: 32px;
+    font-size: 12px;
+    margin-right: 4px;
+  }
+  
+  button[name="btnEdit"] nz-icon,
+  button[name="btnDelete"] nz-icon {
+    font-size: 12px;
+  }
+}
+
+/* Table action column styling */
+td:last-child {
+  text-align: center;
+  padding: 12px 8px;
+}
+
+/* Search form buttons styling */
+button[name="btnSearch"],
+button[name="btnReset"] {
+  height: 40px;
+  min-width: 100px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+}
+
+/* Search button specific styling */
+button[name="btnSearch"] {
+  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  border-color: #1890ff;
+  color: white;
+}
+
+button[name="btnSearch"]:hover {
+  background: linear-gradient(135deg, #096dd9 0%, #1890ff 100%);
+  border-color: #096dd9;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
+}
+
+button[name="btnSearch"]:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(24, 144, 255, 0.5);
+}
+
+/* Reset button specific styling */
+button[name="btnReset"] {
+  background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+  border: 2px solid #d9d9d9;
+  color: #595959;
+}
+
+button[name="btnReset"]:hover {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e6f4ff 100%);
+  border-color: #40a9ff;
+  color: #1890ff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(64, 169, 255, 0.2);
+}
+
+button[name="btnReset"]:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(64, 169, 255, 0.3);
+}
+
+/* Icon styling within search form buttons */
+button[name="btnSearch"] nz-icon,
+button[name="btnReset"] nz-icon {
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+button[name="btnSearch"]:hover nz-icon,
+button[name="btnReset"]:hover nz-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+button[name="btnSearch"]:active nz-icon,
+button[name="btnReset"]:active nz-icon {
+  transform: scale(1.05);
+}
+
+/* Responsive design for search form buttons */
+@media (max-width: 768px) {
+  button[name="btnSearch"],
+  button[name="btnReset"] {
+    height: 36px;
+    min-width: 80px;
+    font-size: 12px;
+    border-radius: 18px;
+  }
+  
+  button[name="btnSearch"] nz-icon,
+  button[name="btnReset"] nz-icon {
+    font-size: 14px;
+  }
+}
+

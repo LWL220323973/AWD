@@ -31,7 +31,13 @@
   "Friday": "星期五",
   "clear": "清除",
   "No data": "未找到数据",
-  "Add" : "添加",
+  "Add": "添加",
   "AddOffice": "添加流动邮政局",
-  "AddOfficeLocation": "添加流动邮政局地点"
+  "AddOfficeLocation": "添加流动邮政局地点",
+  "edit": "编辑",
+  "delete": "删除",
+  "confirmDeleteModal": "删除确认",
+  "confirmDelete": "您确定要删除此流动邮政局吗？",
+  "cancel": "取消",
+  "confirm": "确认"
 }
