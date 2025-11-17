@@ -1,6 +1,6 @@
 {
   "title": "Mobile Post Office",
-  "search": "Search",
+  "submit": "Submit",
   "location": "Location",
   "district": "District",
   "Central & Western": "Central & Western",
@@ -39,5 +39,13 @@
   "confirmDeleteModal": "Delete Confirmation",
   "confirmDelete": "Are you sure you want to delete this mobile post office?",
   "cancel": "Cancel",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "location(TW)": "Location (Traditional Chinese)",
+  "address(TW)": "Address (Traditional Chinese)",
+  "location(EN)": "Location (English)",
+  "address(EN)": "Address (English)",
+  "location(CHS)": "Location (Simplified Chinese)",
+  "address(CHS)": "Address (Simplified Chinese)",
+  "openHours": "Open Hours",
+  "closeHours": "Close Hours"
 }

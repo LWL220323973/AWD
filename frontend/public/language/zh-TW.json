@@ -39,5 +39,13 @@
   "confirmDeleteModal": "刪除確認",
   "confirmDelete": "您確定要刪除此流動郵政局嗎？",
   "cancel": "取消",
-  "confirm": "確認"
+  "confirm": "確認",
+  "location(TW)": "地點（繁體中文）",
+  "address(TW)": "地址（繁體中文）",
+  "location(EN)": "地點（英文）",
+  "address(EN)": "地址（英文）",
+  "location(CHS)": "地點（簡體中文）",
+  "address(CHS)": "地址（簡體中文）",
+  "openHours": "開放時間",
+  "closeHours": "關閉時間"
 }

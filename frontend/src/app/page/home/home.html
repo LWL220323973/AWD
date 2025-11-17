@@ -5,20 +5,9 @@
         <nz-form-item>
           <nz-form-label>{{ getTranslation('location') }}</nz-form-label>
           <nz-form-control>
-            <nz-input-group [nzSuffix]="clearLocationTemplate">
+            <nz-input-wrapper nzAllowClear>
               <input nz-input [attr.id]="'location'" [(ngModel)]="location" name="location" />
-            </nz-input-group>
-            <ng-template #clearLocationTemplate>
-              @if (location && location.length > 0) {
-              <nz-icon
-                nzType="close"
-                nzTheme="outline"
-                (click)="clearLocation()"
-                style="cursor: pointer"
-              >
-              </nz-icon>
-              }
-            </ng-template>
+            </nz-input-wrapper>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -64,20 +53,9 @@
         <nz-form-item>
           <nz-form-label>{{ getTranslation('address') }}</nz-form-label>
           <nz-form-control>
-            <nz-input-group [nzSuffix]="clearAddressTemplate">
+            <nz-input-wrapper nzAllowClear>
               <input nz-input [attr.id]="'address'" [(ngModel)]="address" name="address" />
-            </nz-input-group>
-            <ng-template #clearAddressTemplate>
-              @if (address && address.length > 0) {
-              <nz-icon
-                nzType="close"
-                nzTheme="outline"
-                (click)="clearAddress()"
-                style="cursor: pointer"
-              >
-              </nz-icon>
-              }
-            </ng-template>
+            </nz-input-wrapper>
           </nz-form-control>
         </nz-form-item>
       </nz-col>

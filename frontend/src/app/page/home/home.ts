@@ -119,14 +119,6 @@ export class Home implements OnInit {
       .filter((item: any) => item.mobile_code === mobile_code);
   }
 
-  clearLocation(): void {
-    this.location = '';
-  }
-
-  clearAddress(): void {
-    this.address = '';
-  }
-
   updateOptions(): void {
     this.districtOptions = [
       { value: 'Central & Western', label: this.getTranslation('Central & Western') },
