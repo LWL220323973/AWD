@@ -18,7 +18,6 @@ CREATE TABLE post_mobile_office (
     day_of_week_code INT NOT NULL COMMENT '星期代碼(1-7) / Day of Week Code (1-7)',
     latitude DECIMAL(10, 8) NOT NULL COMMENT '緯度 / Latitude',
     longitude DECIMAL(11, 8) NOT NULL COMMENT '經度 / Longitude',
-    seq INT NOT NULL COMMENT '順序號碼 / Sequence Number',
-    last_update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間 / Update Time',
+    -- seq INT NOT NULL COMMENT '順序號碼 / Sequence Number',
     PRIMARY KEY (`id`)
 )

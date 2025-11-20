@@ -66,7 +66,35 @@
   <nz-form-item>
     <nz-form-label>{{ getTranslation('weekdays') }}</nz-form-label>
     <nz-form-control>
-      <nz-checkbox-group [nzOptions]="weekdayOptions" [(ngModel)]="workingDays" name="weekdays" />
+      @for (weekday of weekdayOptions; track $index) {
+      <label
+        nz-checkbox
+        name="Monday"
+        (ngModel)="(weekday.open)"
+        (ngModelChange)="onWorkdaySelect(weekday, !weekday.open)"
+        >{{ weekday.label }}</label
+      >
+      <div class="weekdays-time-picker" hidden="weekday.open">
+        <nz-time-picker
+          [attr.id]="'openHour'"
+          [nzFormat]="'HH:mm'"
+          [nzAllowEmpty]
+          [(ngModel)]="weekday.openHour"
+          name="openHour"
+        ></nz-time-picker>
+        -
+        <nz-time-picker
+          [attr.id]="'closingHour'"
+          [nzFormat]="'HH:mm'"
+          [(ngModel)]="weekday.closeHour"
+          name="closingHour"
+        ></nz-time-picker>
+      </div>
+
+      <br />
+      }
+
+      <br />
     </nz-form-control>
   </nz-form-item>
   <!-- <nz-form-item>

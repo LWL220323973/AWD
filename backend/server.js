@@ -358,10 +358,9 @@ function initializeFileOperations() {
                 }
                 try {
                   const jsonData = JSON.parse(data);
-                  const lastUpdateTime = jsonData.lastUpdateDate;
                   jsonData.data.forEach((item) => {
                     const sql =
-                      "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`, `seq`,`last_update_time`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                      "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     const values = [
                       item.mobileCode,
                       item.locationTC,
@@ -381,8 +380,6 @@ function initializeFileOperations() {
                       item.dayOfWeekCode,
                       item.latitude,
                       item.longitude,
-                      item.seq,
-                      lastUpdateTime,
                     ];
                     conn.query(sql, values, (err, results) => {
                       if (err) {
