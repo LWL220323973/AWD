@@ -47,7 +47,7 @@ export class LanguageService {
           officeHours: 'Office Hours',
           clear: 'Clear',
           submit: 'Submit',
-          'No data': 'No Data Found'
+          'No data': 'No Data Found',
         };
         this.translations$.next(fallbackTranslations);
       },

@@ -4,6 +4,12 @@
 />
 <form nz-form class="officeForm">
   <nz-form-item>
+    <nz-form-label>{{getTranslation('title')}}</nz-form-label>
+    <nz-form-control>
+      
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
     <nz-form-label>{{ getTranslation('location(EN)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
@@ -54,13 +60,13 @@
   <nz-form-item>
     <nz-form-label>{{ getTranslation('district') }}</nz-form-label>
     <nz-form-control>
-      <!-- <nz-select
+      <nz-select
         nzAllowClear
         [nzOptions]="districtOptions"
         [attr.id]="'district'"
         [(ngModel)]="selectedDistrict"
         name="district"
-      ></nz-select> -->
+      ></nz-select>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
@@ -72,48 +78,31 @@
         name="Monday"
         (ngModel)="(weekday.open)"
         (ngModelChange)="onWorkdaySelect(weekday, !weekday.open)"
-        >{{ weekday.label }}</label
-      >
-      <div class="weekdays-time-picker" hidden="weekday.open">
-        <nz-time-picker
-          [attr.id]="'openHour'"
-          [nzFormat]="'HH:mm'"
-          [nzAllowEmpty]
-          [(ngModel)]="weekday.openHour"
-          name="openHour"
-        ></nz-time-picker>
-        -
-        <nz-time-picker
-          [attr.id]="'closingHour'"
-          [nzFormat]="'HH:mm'"
-          [(ngModel)]="weekday.closeHour"
-          name="closingHour"
-        ></nz-time-picker>
-      </div>
-
+        >{{ weekday.label }}
+        <label [hidden]="!weekday.open">
+          <nz-time-picker
+            [attr.id]="'openHour'"
+            [nzFormat]="'HH:mm'"
+            [nzAllowEmpty]
+            [(ngModel)]="weekday.openHour"
+            name="openHour"
+            (ngModelChange)="onTimeChange(weekday, 'open', weekday.openHour? weekday.openHour : null)"
+          ></nz-time-picker>
+          -
+          <nz-time-picker
+            [attr.id]="'closingHour'"
+            [nzFormat]="'HH:mm'"
+            [(ngModel)]="weekday.closeHour"
+            name="closingHour"
+            (ngModelChange)="onTimeChange(weekday, 'close', weekday.closeHour? weekday.closeHour : null)"
+          ></nz-time-picker>
+        </label>
+      </label>
       <br />
       }
-
-      <br />
     </nz-form-control>
   </nz-form-item>
-  <!-- <nz-form-item>
-    <nz-form-label>{{ getTranslation('officeHours') }}</nz-form-label>
-    <nz-form-control>
-      <nz-time-picker
-        [attr.id]="'openHour'"
-        [nzFormat]="'HH:mm'"
-        [nzAllowEmpty]
-        [(ngModel)]="openHour"
-        name="openHour"
-      ></nz-time-picker>
-      -
-      <nz-time-picker
-        [attr.id]="'closingHour'"
-        [nzFormat]="'HH:mm'"
-        [(ngModel)]="closingHour"
-        name="closingHour"
-      ></nz-time-picker>
-    </nz-form-control>
-  </nz-form-item> -->
+  <nz-form-item>
+
+  </nz-form-item>
 </form>
