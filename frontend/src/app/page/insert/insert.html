@@ -1,19 +1,30 @@
-<nz-segmented
-  [nzOptions]="[getTranslation('AddOffice'), getTranslation('AddOfficeLocation')]"
-  [nzBlock]="true"
-/>
 <form nz-form class="officeForm">
   <nz-form-item>
-    <nz-form-label>{{getTranslation('title')}}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('title') }}</nz-form-label>
     <nz-form-control>
-      
+      <nz-select
+        nzAllowClear
+        [attr.id]="'postOffice'"
+        name="postOffice"
+        [(ngModel)]="selectedPostOffice"
+      >
+        <nz-option
+          *ngFor="let office of postOfficeNames"
+          [nzLabel]="getTranslation('title') + ' ' + office.mobile_code"
+          [nzValue]="office.mobile_code"
+        ></nz-option>
+        <nz-option
+          [nzLabel]="getTranslation('newOffice')"
+          [nzValue]="postOfficeNames.length + 1"
+        ></nz-option>
+      </nz-select>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
     <nz-form-label>{{ getTranslation('location(EN)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
-        <input nz-input [attr.id]="'location_EN'" [(ngModel)]="location_EN" name="location" />
+        <input nz-input [attr.id]="'location_EN'" [(ngModel)]="location_EN" name="location_EN" />
       </nz-input-wrapper>
     </nz-form-control>
   </nz-form-item>
@@ -21,7 +32,7 @@
     <nz-form-label>{{ getTranslation('location(TW)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
-        <input nz-input [attr.id]="'location_TW'" [(ngModel)]="location_TW" name="location" />
+        <input nz-input [attr.id]="'location_TW'" [(ngModel)]="location_TW" name="location_TW" />
       </nz-input-wrapper>
     </nz-form-control>
   </nz-form-item>
@@ -29,7 +40,7 @@
     <nz-form-label>{{ getTranslation('location(CHS)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
-        <input nz-input [attr.id]="'location_CHS'" [(ngModel)]="location_CHS" name="location" />
+        <input nz-input [attr.id]="'location_CHS'" [(ngModel)]="location_CHS" name="location_CHS" />
       </nz-input-wrapper>
     </nz-form-control>
   </nz-form-item>
@@ -37,7 +48,7 @@
     <nz-form-label>{{ getTranslation('address(EN)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
-        <input nz-input [attr.id]="'address_EN'" [(ngModel)]="address_EN" name="address" />
+        <input nz-input [attr.id]="'address_EN'" [(ngModel)]="address_EN" name="address_EN" />
       </nz-input-wrapper>
     </nz-form-control>
   </nz-form-item>
@@ -45,7 +56,7 @@
     <nz-form-label>{{ getTranslation('address(TW)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
-        <input nz-input [attr.id]="'address_TW'" [(ngModel)]="address_TW" name="address" />
+        <input nz-input [attr.id]="'address_TW'" [(ngModel)]="address_TW" name="address_TW" />
       </nz-input-wrapper>
     </nz-form-control>
   </nz-form-item>
@@ -53,7 +64,7 @@
     <nz-form-label>{{ getTranslation('address(CHS)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
-        <input nz-input [attr.id]="'address_CHS'" [(ngModel)]="address_CHS" name="address" />
+        <input nz-input [attr.id]="'address_CHS'" [(ngModel)]="address_CHS" name="address_CHS" />
       </nz-input-wrapper>
     </nz-form-control>
   </nz-form-item>
@@ -72,37 +83,90 @@
   <nz-form-item>
     <nz-form-label>{{ getTranslation('weekdays') }}</nz-form-label>
     <nz-form-control>
-      @for (weekday of weekdayOptions; track $index) {
-      <label
-        nz-checkbox
-        name="Monday"
-        (ngModel)="(weekday.open)"
-        (ngModelChange)="onWorkdaySelect(weekday, !weekday.open)"
-        >{{ weekday.label }}
-        <label [hidden]="!weekday.open">
-          <nz-time-picker
-            [attr.id]="'openHour'"
-            [nzFormat]="'HH:mm'"
-            [nzAllowEmpty]
-            [(ngModel)]="weekday.openHour"
-            name="openHour"
-            (ngModelChange)="onTimeChange(weekday, 'open', weekday.openHour? weekday.openHour : null)"
-          ></nz-time-picker>
-          -
-          <nz-time-picker
-            [attr.id]="'closingHour'"
-            [nzFormat]="'HH:mm'"
-            [(ngModel)]="weekday.closeHour"
-            name="closingHour"
-            (ngModelChange)="onTimeChange(weekday, 'close', weekday.closeHour? weekday.closeHour : null)"
-          ></nz-time-picker>
+      @for (weekday of weekdayOptions; track weekday.value) {
+      <div class="weekday-container">
+        <label
+          nz-checkbox
+          [name]="'weekday_' + weekday.value"
+          [(ngModel)]="weekday.open"
+          (ngModelChange)="onWorkdaySelect(weekday, $event)"
+        >
+          {{ weekday.label }}
         </label>
-      </label>
-      <br />
+
+        @if (weekday.open) {
+        <div class="time-picker-container">
+          <nz-time-picker
+            [attr.id]="'openHour_' + weekday.value"
+            [nzFormat]="'HH:mm'"
+            [nzAllowEmpty]="true"
+            [(ngModel)]="weekday.openHour"
+            [name]="'openHour_' + weekday.value"
+            [nzPlaceHolder]="getTranslation('openHours') || 'Open Time'"
+            (ngModelChange)="onTimeChange(weekday, 'open', $event)"
+          ></nz-time-picker>
+          <span class="time-separator">-</span>
+          <nz-time-picker
+            [attr.id]="'closeHour_' + weekday.value"
+            [nzFormat]="'HH:mm'"
+            [nzAllowEmpty]="true"
+            [(ngModel)]="weekday.closeHour"
+            [name]="'closeHour_' + weekday.value"
+            [nzPlaceHolder]="getTranslation('closeHours') || 'Close Time'"
+            (ngModelChange)="onTimeChange(weekday, 'close', $event)"
+          ></nz-time-picker>
+        </div>
+        }
+      </div>
       }
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-
+    <nz-form-label>{{ getTranslation('lat&lng') }}</nz-form-label>
+    <nz-form-control>
+      <div class="lat-lng-container">
+        <nz-input-wrapper nzAllowClear>
+          <input
+            nz-input
+            [attr.id]="'latitude'"
+            [(ngModel)]="latitude"
+            name="latitude"
+            placeholder="{{ getTranslation('latitude') || 'Latitude' }}"
+          />
+        </nz-input-wrapper>
+        <span class="lat-lng-separator">,&nbsp;</span>
+        <nz-input-wrapper nzAllowClear>
+          <input
+            nz-input
+            [attr.id]="'longitude'"
+            [(ngModel)]="longitude"
+            name="longitude"
+            placeholder="{{ getTranslation('longitude') || 'Longitude' }}"
+          />
+        </nz-input-wrapper>
+      </div>
+    </nz-form-control>
   </nz-form-item>
+  <nz-row>
+    <nz-col nzSpan="12">
+      <nz-form-item class="button-container">
+        <nz-form-control class="button-left">
+          <button nz-button nzType="default" class="reset-btn" (click)="onReset()">
+            <span class="button-icon">↺</span>
+            {{ getTranslation('reset') }}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-col>
+    <nz-col nzSpan="12">
+      <nz-form-item>
+        <nz-form-control class="button-right">
+          <button nz-button nzType="primary" class="submit-btn" (click)="onSubmit()">
+            {{ getTranslation('submit') }}
+            <span class="button-icon">→</span>
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-col>
+  </nz-row>
 </form>

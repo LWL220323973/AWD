@@ -1,6 +1,6 @@
 {
   "title": "Mobile Post Office",
-  "submit": "Submit",
+  "search": "Search",
   "location": "Location",
   "district": "District",
   "Central & Western": "Central & Western",
@@ -47,5 +47,11 @@
   "location(CHS)": "Location (Simplified Chinese)",
   "address(CHS)": "Address (Simplified Chinese)",
   "openHours": "Open Hours",
-  "closeHours": "Close Hours"
+  "closeHours": "Close Hours",
+  "newOffice": "New Mobile Post Office",
+  "lat&lng": "Latitude & Longitude",
+  "latitude": "Latitude",
+  "longitude": "Longitude",
+  "reset": "Reset",
+  "submit": "Submit"
 }

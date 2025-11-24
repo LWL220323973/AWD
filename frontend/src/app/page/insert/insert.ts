@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 import { LanguageService } from '../../services/languageService';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -8,7 +9,9 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 import { selectMobilePostOfficeName } from '../../api/select';
+import { insert } from '../../api/insert';
 
 interface weekday {
   label: string;
@@ -24,10 +27,10 @@ interface districtOption {
 }
 
 interface mobilePostOfficeName {
-  code:string;
-  name_EN: string;
-  name_TW: string;
-  name_CHS: string;
+  mobile_code: string;
+  name_tc: string;
+  name_en: string;
+  name_sc: string;
 }
 
 @Component({
@@ -41,13 +44,13 @@ interface mobilePostOfficeName {
     NzTimePickerModule,
     NzCheckboxModule,
     NzSelectModule,
+    NzGridModule,
   ],
   templateUrl: './insert.html',
   styleUrl: './insert.css',
 })
 export class Insert implements OnInit {
-  constructor(private language: LanguageService) {}
-  // options = [this.getTranslation('AddOffice'), this.getTranslation('AddOfficeLocation')];
+  constructor(private language: LanguageService, private router: Router) {}
 
   ngOnInit(): void {
     // Initialize options immediately
@@ -77,8 +80,11 @@ export class Insert implements OnInit {
   location_CHS: string = '';
   address_CHS: string = '';
   selectedDays: weekday[] = [];
-  selectedDistrict: string[] = [];
+  selectedDistrict: string[] | null = null;
   postOfficeNames: mobilePostOfficeName[] = [];
+  selectedPostOffice: string | null = null;
+  latitude: string = '';
+  longitude: string = '';
   // Translation method - uses LanguageService
   getTranslation(key: string): string {
     return this.language.getTranslation(key);
@@ -163,23 +169,81 @@ export class Insert implements OnInit {
   }
 
   onWorkdaySelect(day: weekday, isChecked: boolean): void {
-    console.log('Checkbox changed:', isChecked);
+    console.log('Checkbox changed:', day.label, isChecked);
     day.open = isChecked;
-    this.weekdayOptions = this.weekdayOptions.map((d) => (d.value === day.value ? day : d));
+
+    // Reset time values when unchecked
+    if (!isChecked) {
+      day.openHour = null;
+      day.closeHour = null;
+    }
+
+    // Update the selected days array
     this.selectedDays = this.weekdayOptions.filter((d) => d.open);
+    console.log('Selected days:', this.selectedDays);
   }
 
   onTimeChange(day: weekday, type: 'open' | 'close', time: Date | null): void {
     if (type === 'open') {
       day.openHour = time;
-      console.log('Open hour set to:', time);
+      console.log(`Open hour set for ${day.label}:`, time);
     } else {
       day.closeHour = time;
-      console.log('Close hour set to:', time);
+      console.log(`Close hour set for ${day.label}:`, time);
     }
-    this.weekdayOptions = this.weekdayOptions.map((d) => (d.value === day.value ? day : d));
-    this.selectedDays = this.weekdayOptions.filter((d) => d.open);
-    console.log(`Time changed for ${day.label}:`, day);
+
+    console.log(`Updated ${day.label}:`, {
+      open: day.open,
+      openHour: day.openHour,
+      closeHour: day.closeHour,
+    });
+  }
+
+  onReset(): void {
+    this.location_EN = '';
+    this.address_EN = '';
+    this.location_TW = '';
+    this.address_TW = '';
+    this.location_CHS = '';
+    this.address_CHS = '';
+    this.latitude = '';
+    this.longitude = '';
+    this.selectedPostOffice = null;
+    this.selectedDays = [];
+    this.selectedDistrict = null;
+    this.weekdayOptions.forEach((day) => {
+      day.open = false;
+      day.openHour = null;
+      day.closeHour = null;
+    });
+    console.log('Form has been reset');
+  }
+
+  async onSubmit(): Promise<void> {
+    const insertData = {
+      location_EN: this.location_EN.trim(),
+      address_EN: this.address_EN.trim(),
+      location_TW: this.location_TW.trim(),
+      address_TW: this.address_TW.trim(),
+      location_CHS: this.location_CHS.trim(),
+      address_CHS: this.address_CHS.trim(),
+      latitude: this.latitude.trim(),
+      longitude: this.longitude.trim(),
+      mobile_code: this.selectedPostOffice,
+      workday: this.selectedDays,
+      district: this.selectedDistrict,
+    };
+
+    insert(insertData)
+      .then((response) => {
+        console.log('Insert successful:', response.data);
+        // Optionally reset the form after successful submission
+        this.onReset();
+        this.router.navigate(['/insert']);
+      })
+      .catch((error) => {
+        console.error('Insert failed:', error);
+      });
   }
 
   getMobilePostOfficeNames(): void {

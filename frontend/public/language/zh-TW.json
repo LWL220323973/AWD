@@ -47,5 +47,11 @@
   "location(CHS)": "地點（簡體中文）",
   "address(CHS)": "地址（簡體中文）",
   "openHours": "開放時間",
-  "closeHours": "關閉時間"
+  "closeHours": "關閉時間",
+  "newOffice" : "新流動郵政局",
+  "lat&lng": "緯度 & 經度",
+  "latitude": "緯度",
+  "longitude": "經度",
+  "reset": "重置",
+  "submit": "提交"
 }

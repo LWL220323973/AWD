@@ -1,0 +1,377 @@
+/* ==================================
+   FORM STYLES
+   ================================== */
+
+/* Form Container */
+.officeForm {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Item Spacing */
+nz-form-item {
+  margin-bottom: 1.5rem;
+}
+
+nz-form-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Form Label */
+nz-form-label {
+  font-weight: 500;
+  color: #333;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Form Control */
+nz-form-control {
+  width: 100%;
+}
+
+/* Input Fields */
+input[nz-input] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+input[nz-input]:hover {
+  border-color: #40a9ff;
+  background-color: #f5f9ff;
+  box-shadow: 0 2px 4px rgba(24, 144, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+input[nz-input]:focus {
+  border-color: #1890ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  background-color: #fff;
+}
+
+input[nz-input]::placeholder {
+  color: #bfbfbf;
+}
+
+/* Select Dropdown */
+::ng-deep .ant-select-selector {
+  border: 1px solid #d9d9d9 !important;
+  border-radius: 4px !important;
+  padding: 4px 12px !important;
+  height: 32px !important;
+  transition: all 0.3s ease !important;
+  background-color: #fff !important;
+}
+
+::ng-deep .ant-select:hover .ant-select-selector {
+  border-color: #40a9ff !important;
+  box-shadow: 0 2px 4px rgba(24, 144, 255, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+::ng-deep .ant-select-focused .ant-select-selector {
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+::ng-deep .ant-select-selection-item {
+  color: #333 !important;
+}
+
+::ng-deep .ant-select-selection-placeholder {
+  color: #bfbfbf !important;
+}
+
+/* Dropdown Menu */
+::ng-deep .ant-select-dropdown {
+  border-radius: 4px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+::ng-deep .ant-select-item {
+  color: #333 !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+::ng-deep .ant-select-item:hover {
+  background-color: #e6f7ff !important;
+  transform: translateX(2px) !important;
+}
+
+::ng-deep .ant-select-item-option-selected {
+  background: #f5f5f5 !important;
+}
+
+/* Checkboxes */
+::ng-deep .ant-checkbox-wrapper {
+  color: #333 !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+}
+
+::ng-deep .ant-checkbox-wrapper:hover {
+  color: #1890ff !important;
+}
+
+::ng-deep .ant-checkbox-inner {
+  border-color: #d9d9d9 !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .ant-checkbox:hover .ant-checkbox-inner {
+  border-color: #40a9ff !important;
+  box-shadow: 0 0 4px rgba(24, 144, 255, 0.2) !important;
+}
+
+::ng-deep .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+}
+
+/* Weekday Container */
+.weekday-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.weekday-container:hover {
+  border-color: #40a9ff;
+  background-color: #f5f9ff;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.weekday-container:last-child {
+  margin-bottom: 0;
+}
+
+.weekday-container label {
+  margin-bottom: 0.5rem;
+}
+
+/* Time Picker Container */
+.time-picker-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  margin-left: 24px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.time-separator {
+  color: #666;
+  font-weight: bold;
+  margin: 0 0.25rem;
+}
+
+::ng-deep .ant-picker {
+  border: 1px solid #d9d9d9 !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .ant-picker:hover {
+  border-color: #40a9ff !important;
+  box-shadow: 0 2px 4px rgba(24, 144, 255, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+::ng-deep .ant-picker-focused {
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+/* Latitude & Longitude Container */
+.lat-lng-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lat-lng-container nz-input-wrapper {
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+.lat-lng-container nz-input-wrapper:hover {
+  transform: scale(1.01);
+}
+
+.lat-lng-separator {
+  color: #666;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.lat-lng-separator:hover {
+  color: #1890ff;
+}
+
+/* Buttons */
+nz-row {
+  margin-top: 2rem !important;
+}
+
+nz-col {
+  padding: 0 8px;
+}
+
+nz-col:first-child {
+  padding-left: 0;
+}
+
+nz-col:last-child {
+  padding-right: 0;
+}
+
+button[nz-button] {
+  width: 100% !important;
+  height: 40px !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Submit Button */
+.submit-btn {
+  background-color: #1890ff !important;
+  border-color: #1890ff !important;
+  color: #fff !important;
+}
+
+.submit-btn:hover {
+  background-color: #40a9ff !important;
+  border-color: #40a9ff !important;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3) !important;
+  transform: translateY(-2px) !important;
+}
+
+.submit-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 6px rgba(24, 144, 255, 0.2) !important;
+}
+
+/* Reset Button */
+.reset-btn {
+  background-color: #fff !important;
+  border: 1px solid #d9d9d9 !important;
+  color: #333 !important;
+}
+
+.reset-btn:hover {
+  color: #40a9ff !important;
+  border-color: #40a9ff !important;
+  background-color: #f5f9ff !important;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+.reset-btn:active {
+  transform: translateY(0) !important;
+}
+
+.button-icon {
+  font-size: 1.1em;
+  display: inline-block;
+  transition: all 0.3s ease !important;
+}
+
+.submit-btn:hover .button-icon {
+  transform: translateX(3px);
+}
+
+.reset-btn:hover .button-icon {
+  transform: rotate(-90deg);
+}
+
+/* ==================================
+   RESPONSIVE DESIGN
+   ================================== */
+
+@media (max-width: 768px) {
+  .officeForm {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .lat-lng-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lat-lng-separator {
+    text-align: center;
+    margin: 0.5rem 0;
+  }
+
+  .time-picker-container {
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: 0;
+  }
+
+  nz-col {
+    padding: 0 !important;
+    margin-bottom: 1rem;
+  }
+
+  nz-col:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .officeForm {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+
+  nz-form-item {
+    margin-bottom: 1rem;
+  }
+
+  button[nz-button] {
+    height: 36px !important;
+    font-size: 13px !important;
+  }
+}
