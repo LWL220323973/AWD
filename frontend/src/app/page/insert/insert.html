@@ -21,7 +21,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('location(EN)') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('location(EN)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
         <input nz-input [attr.id]="'location_EN'" [(ngModel)]="location_EN" name="location_EN" />
@@ -29,7 +29,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('location(TW)') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('location(TW)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
         <input nz-input [attr.id]="'location_TW'" [(ngModel)]="location_TW" name="location_TW" />
@@ -37,7 +37,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('location(CHS)') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('location(CHS)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
         <input nz-input [attr.id]="'location_CHS'" [(ngModel)]="location_CHS" name="location_CHS" />
@@ -45,7 +45,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('address(EN)') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('address(EN)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
         <input nz-input [attr.id]="'address_EN'" [(ngModel)]="address_EN" name="address_EN" />
@@ -53,7 +53,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('address(TW)') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('address(TW)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
         <input nz-input [attr.id]="'address_TW'" [(ngModel)]="address_TW" name="address_TW" />
@@ -61,7 +61,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('address(CHS)') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('address(CHS)') }}</nz-form-label>
     <nz-form-control>
       <nz-input-wrapper nzAllowClear>
         <input nz-input [attr.id]="'address_CHS'" [(ngModel)]="address_CHS" name="address_CHS" />
@@ -69,7 +69,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('district') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('district') }}</nz-form-label>
     <nz-form-control>
       <nz-select
         nzAllowClear
@@ -81,7 +81,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('weekdays') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('weekdays') }}</nz-form-label>
     <nz-form-control>
       @for (weekday of weekdayOptions; track weekday.value) {
       <div class="weekday-container">
@@ -122,7 +122,7 @@
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label>{{ getTranslation('lat&lng') }}</nz-form-label>
+    <nz-form-label nzRequired>{{ getTranslation('lat&lng') }}</nz-form-label>
     <nz-form-control>
       <div class="lat-lng-container">
         <nz-input-wrapper nzAllowClear>
@@ -170,3 +170,11 @@
     </nz-col>
   </nz-row>
 </form>
+<nz-modal
+  [(nzVisible)]="isNzModalVisible"
+  [nzTitle]="getTranslation('missFields')"
+  [nzContent]="content"
+  (nzOnCancel)="handleCancel()"
+  nzCentered
+>
+</nz-modal>

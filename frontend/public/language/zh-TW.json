@@ -53,5 +53,6 @@
   "latitude": "緯度",
   "longitude": "經度",
   "reset": "重置",
-  "submit": "提交"
+  "submit": "提交",
+  "missFields": "請填寫以下必填字段："
 }

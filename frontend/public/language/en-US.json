@@ -53,5 +53,6 @@
   "latitude": "Latitude",
   "longitude": "Longitude",
   "reset": "Reset",
-  "submit": "Submit"
+  "submit": "Submit",
+  "missFields": "Please fill in the following required fields:"
 }

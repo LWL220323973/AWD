@@ -12,6 +12,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { selectMobilePostOfficeName } from '../../api/select';
 import { insert } from '../../api/insert';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 interface weekday {
   label: string;
@@ -45,6 +46,7 @@ interface mobilePostOfficeName {
     NzCheckboxModule,
     NzSelectModule,
     NzGridModule,
+    NzModalModule,
   ],
   templateUrl: './insert.html',
   styleUrl: './insert.css',
@@ -71,8 +73,10 @@ export class Insert implements OnInit {
   }
 
   currentLanguage: string = '';
+
   weekdayOptions: weekday[] = [];
   districtOptions: districtOption[] = [];
+
   location_EN: string = '';
   address_EN: string = '';
   location_TW: string = '';
@@ -85,6 +89,9 @@ export class Insert implements OnInit {
   selectedPostOffice: string | null = null;
   latitude: string = '';
   longitude: string = '';
+
+  isNzModalVisible: boolean = false;
+  content: string = '';
   // Translation method - uses LanguageService
   getTranslation(key: string): string {
     return this.language.getTranslation(key);
@@ -220,20 +227,36 @@ export class Insert implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-    const insertData = {
-      location_EN: this.location_EN.trim(),
-      address_EN: this.address_EN.trim(),
-      location_TW: this.location_TW.trim(),
-      address_TW: this.address_TW.trim(),
-      location_CHS: this.location_CHS.trim(),
-      address_CHS: this.address_CHS.trim(),
-      latitude: this.latitude.trim(),
-      longitude: this.longitude.trim(),
-      mobile_code: this.selectedPostOffice,
-      workday: this.selectedDays,
-      district: this.selectedDistrict,
-    };
+    const missingFields: string[] = [];
+    this.selectedPostOffice? null : missingFields.push(this.getTranslation('title'));
+    this.location_EN.trim() ? null : missingFields.push(this.getTranslation('location(EN)'));
+    this.location_TW.trim() ? null : missingFields.push(this.getTranslation('location(TW)'));
+    this.location_CHS.trim() ? null : missingFields.push(this.getTranslation('location(CHS)'));
+    this.address_EN.trim() ? null : missingFields.push(this.getTranslation('address(EN)'));
+    this.address_TW.trim() ? null : missingFields.push(this.getTranslation('address(TW)'));
+    this.address_CHS.trim() ? null : missingFields.push(this.getTranslation('address(CHS)'));
+    this.selectedDistrict ? null : missingFields.push(this.getTranslation('district'));
+    if (this.selectedDays.length == 0) {
+      missingFields.push(this.getTranslation('weekdays'));
+    } else {
+      for (const workday of this.selectedDays) {
+        if (!workday.openHour) {
+          missingFields.push(`${this.getTranslation('openHours')} - ${workday.label}`);
+        }
+        if (!workday.closeHour) {
+          missingFields.push(`${this.getTranslation('closingHours')} - ${workday.label}`);
+        }
+      }
+    }
+    this.latitude.trim() ? null : missingFields.push(this.getTranslation('latitude'));
+    this.longitude.trim() ? null : missingFields.push(this.getTranslation('longitude'));
 
+    if (missingFields.length > 0) {
+      this.isNzModalVisible = true;
+      this.content = missingFields.map(field => `<p>${field}</p>`).join('');
+      return;
+    }
+    const insertData = {};
     insert(insertData)
       .then((response) => {
         console.log('Insert successful:', response.data);
@@ -251,5 +274,9 @@ export class Insert implements OnInit {
       this.postOfficeNames = data.data.data; // Assuming the actual data is in the 'data' property
       console.log('Fetched mobile post office names:', this.postOfficeNames);
     });
+  }
+
+  handleCancel(): void {
+    this.isNzModalVisible = false;
   }
 }

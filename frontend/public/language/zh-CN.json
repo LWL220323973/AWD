@@ -53,5 +53,6 @@
   "latitude": "纬度",
   "longitude": "经度",
   "reset": "重置",
-  "submit": "提交"
+  "submit": "提交",
+  "missFields": "请填写以下必填字段："
 }
