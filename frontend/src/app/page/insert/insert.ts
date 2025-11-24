@@ -13,6 +13,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { selectMobilePostOfficeName } from '../../api/select';
 import { insert } from '../../api/insert';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { da_DK } from 'ng-zorro-antd/i18n';
 
 interface weekday {
   label: string;
@@ -228,7 +229,7 @@ export class Insert implements OnInit {
 
   async onSubmit(): Promise<void> {
     const missingFields: string[] = [];
-    this.selectedPostOffice? null : missingFields.push(this.getTranslation('title'));
+    this.selectedPostOffice ? null : missingFields.push(this.getTranslation('title'));
     this.location_EN.trim() ? null : missingFields.push(this.getTranslation('location(EN)'));
     this.location_TW.trim() ? null : missingFields.push(this.getTranslation('location(TW)'));
     this.location_CHS.trim() ? null : missingFields.push(this.getTranslation('location(CHS)'));
@@ -253,20 +254,44 @@ export class Insert implements OnInit {
 
     if (missingFields.length > 0) {
       this.isNzModalVisible = true;
-      this.content = missingFields.map(field => `<p>${field}</p>`).join('');
+      this.content = missingFields.map((field) => `<p>${field}</p>`).join('');
       return;
     }
-    const insertData = {};
-    insert(insertData)
-      .then((response) => {
-        console.log('Insert successful:', response.data);
-        // Optionally reset the form after successful submission
-        this.onReset();
-        this.router.navigate(['/insert']);
-      })
-      .catch((error) => {
-        console.error('Insert failed:', error);
-      });
+    const insertData = {
+      mobile_code: this.selectedPostOffice,
+      location_en: this.location_EN.trim(),
+      location_tc: this.location_TW.trim(),
+      location_sc: this.location_CHS.trim(),
+      address_en: this.address_EN.trim(),
+      address_tc: this.address_TW.trim(),
+      address_sc: this.address_CHS.trim(),
+      district_en: this.selectedDistrict?.[0] || '',
+      district_tc: this.selectedDistrict?.[1] || '',
+      district_sc: this.selectedDistrict?.[2] || '',
+      latitude: this.latitude.trim(),
+      longitude: this.longitude.trim(),
+      name_tc: '流動郵政局 ' + this.selectedPostOffice,
+      name_en: 'Mobile Post Office ' + this.selectedPostOffice,
+      name_sc: '流动邮政局 ' + this.selectedPostOffice,
+      day_of_week_code: 0,
+      open_hour: '',
+      close_hour: '',
+    };
+    for (let day of this.selectedDays) {
+      insertData.day_of_week_code = day.value;
+      insertData.open_hour = day.openHour ? day.openHour.toTimeString().slice(0, 5) : '';
+      insertData.close_hour = day.closeHour ? day.closeHour.toTimeString().slice(0, 5) : '';
+      insert(insertData)
+        .then((response) => {
+          console.log('Insert successful:', response.data);
+          // Optionally reset the form after successful submission
+          this.onReset();
+          this.router.navigate(['/insert']);
+        })
+        .catch((error) => {
+          console.error('Insert failed:', error);
+        });
+    }
   }
 
   getMobilePostOfficeNames(): void {

@@ -88,48 +88,46 @@ server.get("/api/selectMobilePostOfficeName", (req, res) => {
 // Insert mobile office
 function insertPostMobileOffice(officeInfo, res) {
   const {
-    mobileCode,
-    locationTC,
-    locationSC,
-    locationEN,
-    addressTC,
-    addressSC,
-    addressEN,
-    nameTC,
-    nameSC,
-    nameEN,
-    districtTC,
-    districtSC,
-    districtEN,
-    openHour,
-    closeHour,
-    dayOfWeekCode,
+    mobile_code,
+    location_en,
+    location_tc,
+    location_sc,
+    address_en,
+    address_tc,
+    address_sc,
+    district_en,
+    district_tc,
+    district_sc,
     latitude,
     longitude,
-    seq,
+    name_tc,
+    name_en,
+    name_sc,
+    day_of_week_code,
+    open_hour,
+    close_hour,
   } = officeInfo;
   const sql =
-    "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`, `seq`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   const values = [
-    mobileCode,
-    locationTC,
-    locationSC,
-    locationEN,
-    addressTC,
-    addressSC,
-    addressEN,
-    nameTC,
-    nameSC,
-    nameEN,
-    districtTC,
-    districtSC,
-    districtEN,
-    openHour,
-    closeHour,
-    dayOfWeekCode,
+    mobile_code,
+    location_tc,
+    location_sc,
+    location_en,
+    address_tc,
+    address_sc,
+    address_en,
+    name_tc,
+    name_sc,
+    name_en,
+    district_tc,
+    district_sc,
+    district_en,
+    open_hour,
+    close_hour,
+    day_of_week_code,
     latitude,
     longitude,
-    seq,
   ];
   if (values.includes(undefined) || values.includes("")) {
     res.status(444).json({
@@ -176,9 +174,7 @@ function deleteMobilePostOffice(officeID, res) {
 }
 
 // Update mobile office by officeID
-function updateMobilePostOffice(officeID, officeInfo) {
-  
-}
+function updateMobilePostOffice(officeID, officeInfo) {}
 
 //Select mobile office
 function selectMobilePostOffice(searchParams, res) {
