@@ -1,5 +1,13 @@
 <form nz-form class="officeForm">
   <nz-form-item>
+    <nz-form-control class="back-button-control">
+      <button nz-button nzType="link" class="back-button" (click)="onBack()">
+        <nz-icon nzType="arrow-left" nzTheme="outline" />
+        {{ getTranslation('back') }}
+      </button>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
     <nz-form-label nzRequired>{{ getTranslation('title') }}</nz-form-label>
     <nz-form-control>
       <nz-select

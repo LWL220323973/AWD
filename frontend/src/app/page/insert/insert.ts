@@ -13,7 +13,8 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { selectMobilePostOfficeName } from '../../api/select';
 import { insert } from '../../api/insert';
 import { NzModalModule } from 'ng-zorro-antd/modal';
-import { da_DK } from 'ng-zorro-antd/i18n';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 interface weekday {
   label: string;
@@ -48,12 +49,17 @@ interface mobilePostOfficeName {
     NzSelectModule,
     NzGridModule,
     NzModalModule,
+    NzIconModule,
   ],
   templateUrl: './insert.html',
   styleUrl: './insert.css',
 })
 export class Insert implements OnInit {
-  constructor(private language: LanguageService, private router: Router) {}
+  constructor(
+    private language: LanguageService,
+    private router: Router,
+    private message: NzMessageService
+  ) {}
 
   ngOnInit(): void {
     // Initialize options immediately
@@ -207,6 +213,10 @@ export class Insert implements OnInit {
     });
   }
 
+  onBack(): void {
+    this.router.navigate(['/home']);
+  }
+
   onReset(): void {
     this.location_EN = '';
     this.address_EN = '';
@@ -284,13 +294,14 @@ export class Insert implements OnInit {
       insert(insertData)
         .then((response) => {
           console.log('Insert successful:', response.data);
-          // Optionally reset the form after successful submission
-          this.onReset();
-          this.router.navigate(['/insert']);
         })
         .catch((error) => {
           console.error('Insert failed:', error);
         });
+      this.message.create('success', this.getTranslation('insertSuccess'));
+      setTimeout(() => {
+        this.router.navigate(['/home']);
+      }, 2500);
     }
   }
 

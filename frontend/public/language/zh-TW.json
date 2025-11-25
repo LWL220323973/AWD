@@ -54,5 +54,7 @@
   "longitude": "經度",
   "reset": "重置",
   "submit": "提交",
-  "missFields": "請填寫以下必填字段："
+  "missFields": "請填寫以下必填字段：",
+  "back": "返回首頁",
+  "insertSuccess": "流動郵政局已成功添加！"
 }

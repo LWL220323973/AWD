@@ -143,6 +143,11 @@ function insertPostMobileOffice(officeInfo, res) {
         return;
       }
       console.log("Data inserted successfully: ", values);
+      res.json({
+        success: true,
+        details: values,
+        message: "Data inserted successfully",
+      });
     });
   }
 }

@@ -54,5 +54,7 @@
   "longitude": "Longitude",
   "reset": "Reset",
   "submit": "Submit",
-  "missFields": "Please fill in the following required fields:"
+  "missFields": "Please fill in the following required fields:",
+  "back": "Back to Home",
+  "insertSuccess": "Mobile Post Office has been successfully added!"
 }
