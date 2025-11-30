@@ -10,7 +10,7 @@ import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzGridModule } from 'ng-zorro-antd/grid';
-import { selectMobilePostOfficeName } from '../../api/select';
+import { selectMobilePostOfficeName, selectMobilePostOffice } from '../../api/select';
 import { insert } from '../../api/insert';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -66,16 +66,98 @@ export class Insert implements OnInit {
     this.updateOptions();
     this.getMobilePostOfficeNames();
 
+    if (sessionStorage.getItem('editData')) {
+      this.editData = JSON.parse(sessionStorage.getItem('editData') || '{}');
+      selectMobilePostOffice({ address: this.editData.address_en }).then((response) => {
+        const data = response.data.data;
+        this.location_EN = data[0]?.location_en || '';
+        this.address_EN = data[0]?.address_en || '';
+        this.location_TW = data[0]?.location_tc || '';
+        this.address_TW = data[0]?.address_tc || '';
+        this.location_CHS = data[0]?.location_sc || '';
+        this.address_CHS = data[0]?.address_sc || '';
+        this.latitude = data[0]?.latitude || '';
+        this.longitude = data[0]?.longitude || '';
+        this.selectedPostOffice = data[0]?.mobile_code || '';
+        this.selectedDistrict =
+          this.districtOptions.find((district) => district.value.includes(data[0]?.district_en))
+            ?.value || null;
+        data.forEach((item: any) => {
+          const day = this.weekdayOptions.find((d) => d.value === item.day_of_week_code);
+          const openHour = item.open_hour
+            ? new Date(2099, 12, 31, item.open_hour.slice(0, 2), item.open_hour.slice(3, 5))
+            : null;
+          const closeHour = item.close_hour
+            ? new Date(2099, 12, 31, item.close_hour.slice(0, 2), item.close_hour.slice(3, 5))
+            : null;
+          if (day) {
+            day.open = true;
+            day.openHour = openHour;
+            day.closeHour = closeHour;
+          }
+          this.selectedDays = this.weekdayOptions.filter((d) => d.open);
+        });
+      });
+    }
+
     this.language.selectedLanguage$.subscribe(async (lang) => {
-      console.log('Language changed to:', lang);
+      // console.log('Language changed to:', lang);
       this.currentLanguage = lang;
       this.updateOptions(); // refresh options on language change
+      if (sessionStorage.getItem('editData')) {
+        this.editData = JSON.parse(sessionStorage.getItem('editData') || '{}');
+        selectMobilePostOffice({ address: this.editData.address_en }).then((response) => {
+          const data = response.data.data;
+          this.selectedDistrict =
+            this.districtOptions.find((district) => district.value.includes(data[0]?.district_en))
+              ?.value || null;
+          data.forEach((item: any) => {
+            const day = this.weekdayOptions.find((d) => d.value === item.day_of_week_code);
+            const openHour = item.open_hour
+              ? new Date(2099, 12, 31, item.open_hour.slice(0, 2), item.open_hour.slice(3, 5))
+              : null;
+            const closeHour = item.close_hour
+              ? new Date(2099, 12, 31, item.close_hour.slice(0, 2), item.close_hour.slice(3, 5))
+              : null;
+            if (day) {
+              day.open = true;
+              day.openHour = openHour;
+              day.closeHour = closeHour;
+            }
+            this.selectedDays = this.weekdayOptions.filter((d) => d.open);
+          });
+        });
+      }
     });
 
     //listen to translation changes
     this.language.translations.subscribe(async (translations) => {
       this.currentLanguage = translations;
       this.updateOptions();
+      if (sessionStorage.getItem('editData')) {
+        this.editData = JSON.parse(sessionStorage.getItem('editData') || '{}');
+        selectMobilePostOffice({ address: this.editData.address_en }).then((response) => {
+          const data = response.data.data;
+          this.selectedDistrict =
+            this.districtOptions.find((district) => district.value.includes(data[0]?.district_en))
+              ?.value || null;
+          data.forEach((item: any) => {
+            const day = this.weekdayOptions.find((d) => d.value === item.day_of_week_code);
+            const openHour = item.open_hour
+              ? new Date(2099, 12, 31, item.open_hour.slice(0, 2), item.open_hour.slice(3, 5))
+              : null;
+            const closeHour = item.close_hour
+              ? new Date(2099, 12, 31, item.close_hour.slice(0, 2), item.close_hour.slice(3, 5))
+              : null;
+            if (day) {
+              day.open = true;
+              day.openHour = openHour;
+              day.closeHour = closeHour;
+            }
+            this.selectedDays = this.weekdayOptions.filter((d) => d.open);
+          });
+        });
+      }
     });
   }
 
@@ -99,6 +181,9 @@ export class Insert implements OnInit {
 
   isNzModalVisible: boolean = false;
   content: string = '';
+
+  editData: any = null;
+
   // Translation method - uses LanguageService
   getTranslation(key: string): string {
     return this.language.getTranslation(key);
@@ -214,6 +299,7 @@ export class Insert implements OnInit {
   }
 
   onBack(): void {
+    sessionStorage.removeItem('editData');
     this.router.navigate(['/home']);
   }
 
@@ -308,7 +394,7 @@ export class Insert implements OnInit {
   getMobilePostOfficeNames(): void {
     selectMobilePostOfficeName().then((data) => {
       this.postOfficeNames = data.data.data; // Assuming the actual data is in the 'data' property
-      console.log('Fetched mobile post office names:', this.postOfficeNames);
+      // console.log('Fetched mobile post office names:', this.postOfficeNames);
     });
   }
 

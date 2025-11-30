@@ -137,7 +137,7 @@
                 </td>
                 <td>{{ data.open_hour }} - {{ data.close_hour }}</td>
                 <td>
-                  <button nz-button nzType="primary" name="btnEdit">
+                  <button nz-button nzType="primary" name="btnEdit" (click)="onEdit(data)">
                     <nz-icon nzType="edit" nzTheme="outline" />
                     {{ getTranslation('edit') }}
                   </button>

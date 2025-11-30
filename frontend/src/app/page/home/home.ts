@@ -62,7 +62,7 @@ export class Home implements OnInit {
 
   ngOnInit() {
     this.language.selectedLanguage$.subscribe(async (lang) => {
-      console.log('Language changed to:', lang);
+      // console.log('Language changed to:', lang);
       this.currentLanguage = lang;
       this.updateOptions(); // refresh options on language change
       this.onSubmit();
@@ -181,6 +181,11 @@ export class Home implements OnInit {
       });
   }
 
+  onEdit(data: any): void {
+    sessionStorage.setItem('editData', JSON.stringify(data));
+    this.router.navigate(['/insert']);
+  }
+
   async onSubmit(): Promise<void> {
     const searchItems = {
       location: this.location.trim() ? this.location.trim() : undefined,
@@ -189,7 +194,7 @@ export class Home implements OnInit {
       openHour: this.openHour ? this.openHour.toTimeString().slice(0, 5) : undefined,
       closingHour: this.closingHour ? this.closingHour.toTimeString().slice(0, 5) : undefined,
     };
-    console.log('Submitting search with items:', searchItems);
+    // console.log('Submitting search with items:', searchItems);
     try {
       const response = await selectMobilePostOffice(searchItems);
 
@@ -206,7 +211,6 @@ export class Home implements OnInit {
         this.searchData = [];
         console.error('Invalid response format or no data received');
       }
-      console.log('Final search data:', this.searchData);
     } catch (error) {
       console.error('Search failed:', error);
       this.searchData = [];

@@ -30,7 +30,7 @@ export class LanguageService {
       next: (data) => {
         this.translations$.next(data);
         this.isLoading$.next(false);
-        console.log(`Language ${language} loaded successfully`);
+        // console.log(`Language ${language} loaded successfully`);
       },
       error: (error) => {
         console.error(`Failed to load language file: ${languageFile}`, error);
