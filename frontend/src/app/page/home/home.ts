@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -21,6 +21,8 @@ import { LanguageService } from '../../services/languageService';
 import { selectMobilePostOffice, selectMobilePostOfficeName } from '../../api/select';
 import { deleteMobilePostOffice } from '../../api/delete';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { Subject } from 'rxjs';
+import { takeUntil, skip } from 'rxjs/operators';
 
 interface districtOption {
   value: string;
@@ -57,24 +59,48 @@ interface mobilePostOffice {
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy {
   constructor(private language: LanguageService, private router: Router) {}
 
-  ngOnInit() {
-    this.language.selectedLanguage$.subscribe(async (lang) => {
-      // console.log('Language changed to:', lang);
-      this.currentLanguage = lang;
-      this.updateOptions(); // refresh options on language change
-      this.onSubmit();
-      this.postOfficeNames = await this.mobilePostOfficeName();
-    });
+  private destroy$ = new Subject<void>();
 
-    //listen to translation changes
-    this.language.translations.subscribe(async (translations) => {
-      this.updateOptions();
-      this.onSubmit();
-      this.postOfficeNames = await this.mobilePostOfficeName();
+  ngOnInit() {
+    // Initialize options on first load
+    this.updateOptions();
+    this.mobilePostOfficeName().then((names) => {
+      this.postOfficeNames = names;
     });
+    this.onSubmit();
+
+    // Listen to language changes - skip the first emit to avoid duplicate API calls
+    this.language.selectedLanguage$
+      .pipe(
+        skip(1), // Skip the initial emit
+        takeUntil(this.destroy$)
+      )
+      .subscribe(async (lang) => {
+        this.currentLanguage = lang;
+        this.updateOptions();
+        this.postOfficeNames = await this.mobilePostOfficeName();
+        this.onSubmit();
+      });
+
+    // Listen to translation changes - skip the first emit
+    this.language.translations
+      .pipe(
+        skip(1), // Skip the initial emit
+        takeUntil(this.destroy$)
+      )
+      .subscribe(async (translations) => {
+        this.updateOptions();
+        this.postOfficeNames = await this.mobilePostOfficeName();
+        this.onSubmit();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // Form Itemss

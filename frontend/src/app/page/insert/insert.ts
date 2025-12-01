@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,6 +15,8 @@ import { insert } from '../../api/insert';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { Subject } from 'rxjs';
+import { takeUntil, skip } from 'rxjs/operators';
 
 interface weekday {
   label: string;
@@ -54,111 +56,129 @@ interface mobilePostOfficeName {
   templateUrl: './insert.html',
   styleUrl: './insert.css',
 })
-export class Insert implements OnInit {
+export class Insert implements OnInit, OnDestroy {
   constructor(
     private language: LanguageService,
     private router: Router,
     private message: NzMessageService
   ) {}
 
+  private destroy$ = new Subject<void>();
+
   ngOnInit(): void {
     // Initialize options immediately
     this.updateOptions();
     this.getMobilePostOfficeNames();
 
-    if (sessionStorage.getItem('editData')) {
-      this.editData = JSON.parse(sessionStorage.getItem('editData') || '{}');
-      selectMobilePostOffice({ address: this.editData.address_en }).then((response) => {
-        const data = response.data.data;
-        this.location_EN = data[0]?.location_en || '';
-        this.address_EN = data[0]?.address_en || '';
-        this.location_TW = data[0]?.location_tc || '';
-        this.address_TW = data[0]?.address_tc || '';
-        this.location_CHS = data[0]?.location_sc || '';
-        this.address_CHS = data[0]?.address_sc || '';
-        this.latitude = data[0]?.latitude || '';
-        this.longitude = data[0]?.longitude || '';
-        this.selectedPostOffice = data[0]?.mobile_code || '';
-        this.selectedDistrict =
-          this.districtOptions.find((district) => district.value.includes(data[0]?.district_en))
-            ?.value || null;
-        data.forEach((item: any) => {
-          const day = this.weekdayOptions.find((d) => d.value === item.day_of_week_code);
-          const openHour = item.open_hour
-            ? new Date(2099, 12, 31, item.open_hour.slice(0, 2), item.open_hour.slice(3, 5))
-            : null;
-          const closeHour = item.close_hour
-            ? new Date(2099, 12, 31, item.close_hour.slice(0, 2), item.close_hour.slice(3, 5))
-            : null;
-          if (day) {
-            day.open = true;
-            day.openHour = openHour;
-            day.closeHour = closeHour;
-          }
-          this.selectedDays = this.weekdayOptions.filter((d) => d.open);
-        });
+    // Load edit data if exists
+    this.loadEditData();
+
+    // Listen to language changes - skip initial emit to avoid duplicate API calls
+    this.language.selectedLanguage$
+      .pipe(
+        skip(1), // Skip the first initial emit
+        takeUntil(this.destroy$)
+      )
+      .subscribe((language) => {
+        this.currentLanguage = language;
+        this.updateOptions();
+        // Only reload edit data if in edit mode
+        if (sessionStorage.getItem('editData')) {
+          this.loadEditData();
+        }
       });
+
+    // Listen to translation changes - skip initial emit
+    this.language.translations
+      .pipe(
+        skip(1), // Skip the first initial emit
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.updateOptions();
+        // Only reload edit data if in edit mode
+        if (sessionStorage.getItem('editData')) {
+          this.loadEditData();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadEditData(): void {
+    const editDataJson = sessionStorage.getItem('editData');
+    if (!editDataJson) {
+      return;
     }
 
-    this.language.selectedLanguage$.subscribe(async (lang) => {
-      // console.log('Language changed to:', lang);
-      this.currentLanguage = lang;
-      this.updateOptions(); // refresh options on language change
-      if (sessionStorage.getItem('editData')) {
-        this.editData = JSON.parse(sessionStorage.getItem('editData') || '{}');
-        selectMobilePostOffice({ address: this.editData.address_en }).then((response) => {
-          const data = response.data.data;
-          this.selectedDistrict =
-            this.districtOptions.find((district) => district.value.includes(data[0]?.district_en))
-              ?.value || null;
-          data.forEach((item: any) => {
-            const day = this.weekdayOptions.find((d) => d.value === item.day_of_week_code);
-            const openHour = item.open_hour
-              ? new Date(2099, 12, 31, item.open_hour.slice(0, 2), item.open_hour.slice(3, 5))
-              : null;
-            const closeHour = item.close_hour
-              ? new Date(2099, 12, 31, item.close_hour.slice(0, 2), item.close_hour.slice(3, 5))
-              : null;
-            if (day) {
-              day.open = true;
-              day.openHour = openHour;
-              day.closeHour = closeHour;
-            }
-            this.selectedDays = this.weekdayOptions.filter((d) => d.open);
-          });
-        });
+    this.editData = JSON.parse(editDataJson);
+
+    selectMobilePostOffice({ address: this.editData.address_en })
+      .then((response) => {
+        const data = response.data.data;
+        if (data && data.length > 0) {
+          this.populateFormWithData(data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error loading edit data:', error);
+      });
+  }
+
+  private populateFormWithData(data: any[]): void {
+    if (data.length === 0) return;
+
+    const firstItem = data[0];
+
+    // Set location and address fields
+    this.location_EN = firstItem?.location_en || '';
+    this.address_EN = firstItem?.address_en || '';
+    this.location_TW = firstItem?.location_tc || '';
+    this.address_TW = firstItem?.address_tc || '';
+    this.location_CHS = firstItem?.location_sc || '';
+    this.address_CHS = firstItem?.address_sc || '';
+
+    // Set coordinates
+    this.latitude = firstItem?.latitude || '';
+    this.longitude = firstItem?.longitude || '';
+
+    // Set post office
+    this.selectedPostOffice = firstItem?.mobile_code || '';
+
+    // Set district
+    this.selectedDistrict =
+      this.districtOptions.find((district) => district.value.includes(firstItem?.district_en))
+        ?.value || null;
+
+    // Reset all days first
+    this.weekdayOptions.forEach((day) => {
+      day.open = false;
+      day.openHour = null;
+      day.closeHour = null;
+    });
+
+    // Set weekday hours
+    data.forEach((item: any) => {
+      const day = this.weekdayOptions.find((d) => d.value === item.day_of_week_code);
+      if (day) {
+        const openHour = item.open_hour
+          ? new Date(2099, 12, 31, item.open_hour.slice(0, 2), item.open_hour.slice(3, 5))
+          : null;
+        const closeHour = item.close_hour
+          ? new Date(2099, 12, 31, item.close_hour.slice(0, 2), item.close_hour.slice(3, 5))
+          : null;
+
+        day.open = true;
+        day.openHour = openHour;
+        day.closeHour = closeHour;
       }
     });
 
-    //listen to translation changes
-    this.language.translations.subscribe(async (translations) => {
-      this.currentLanguage = translations;
-      this.updateOptions();
-      if (sessionStorage.getItem('editData')) {
-        this.editData = JSON.parse(sessionStorage.getItem('editData') || '{}');
-        selectMobilePostOffice({ address: this.editData.address_en }).then((response) => {
-          const data = response.data.data;
-          this.selectedDistrict =
-            this.districtOptions.find((district) => district.value.includes(data[0]?.district_en))
-              ?.value || null;
-          data.forEach((item: any) => {
-            const day = this.weekdayOptions.find((d) => d.value === item.day_of_week_code);
-            const openHour = item.open_hour
-              ? new Date(2099, 12, 31, item.open_hour.slice(0, 2), item.open_hour.slice(3, 5))
-              : null;
-            const closeHour = item.close_hour
-              ? new Date(2099, 12, 31, item.close_hour.slice(0, 2), item.close_hour.slice(3, 5))
-              : null;
-            if (day) {
-              day.open = true;
-              day.openHour = openHour;
-              day.closeHour = closeHour;
-            }
-            this.selectedDays = this.weekdayOptions.filter((d) => d.open);
-          });
-        });
-      }
-    });
+    this.selectedDays = this.weekdayOptions.filter((d) => d.open);
+    this.beforeSelectedDays = this.selectedDays.map((day) => ({ ...day }));
   }
 
   currentLanguage: string = '';
@@ -183,7 +203,7 @@ export class Insert implements OnInit {
   content: string = '';
 
   editData: any = null;
-
+  beforeSelectedDays: weekday[] = [];
   // Translation method - uses LanguageService
   getTranslation(key: string): string {
     return this.language.getTranslation(key);
@@ -352,42 +372,46 @@ export class Insert implements OnInit {
       this.isNzModalVisible = true;
       this.content = missingFields.map((field) => `<p>${field}</p>`).join('');
       return;
-    }
-    const insertData = {
-      mobile_code: this.selectedPostOffice,
-      location_en: this.location_EN.trim(),
-      location_tc: this.location_TW.trim(),
-      location_sc: this.location_CHS.trim(),
-      address_en: this.address_EN.trim(),
-      address_tc: this.address_TW.trim(),
-      address_sc: this.address_CHS.trim(),
-      district_en: this.selectedDistrict?.[0] || '',
-      district_tc: this.selectedDistrict?.[1] || '',
-      district_sc: this.selectedDistrict?.[2] || '',
-      latitude: this.latitude.trim(),
-      longitude: this.longitude.trim(),
-      name_tc: '流動郵政局 ' + this.selectedPostOffice,
-      name_en: 'Mobile Post Office ' + this.selectedPostOffice,
-      name_sc: '流动邮政局 ' + this.selectedPostOffice,
-      day_of_week_code: 0,
-      open_hour: '',
-      close_hour: '',
-    };
-    for (let day of this.selectedDays) {
-      insertData.day_of_week_code = day.value;
-      insertData.open_hour = day.openHour ? day.openHour.toTimeString().slice(0, 5) : '';
-      insertData.close_hour = day.closeHour ? day.closeHour.toTimeString().slice(0, 5) : '';
-      insert(insertData)
-        .then((response) => {
-          console.log('Insert successful:', response.data);
-        })
-        .catch((error) => {
-          console.error('Insert failed:', error);
-        });
-      this.message.create('success', this.getTranslation('insertSuccess'));
-      setTimeout(() => {
-        this.router.navigate(['/home']);
-      }, 2500);
+    } else {
+      const insertData = {
+        mobile_code: this.selectedPostOffice,
+        location_en: this.location_EN.trim(),
+        location_tc: this.location_TW.trim(),
+        location_sc: this.location_CHS.trim(),
+        address_en: this.address_EN.trim(),
+        address_tc: this.address_TW.trim(),
+        address_sc: this.address_CHS.trim(),
+        district_en: this.selectedDistrict?.[0] || '',
+        district_tc: this.selectedDistrict?.[1] || '',
+        district_sc: this.selectedDistrict?.[2] || '',
+        latitude: this.latitude.trim(),
+        longitude: this.longitude.trim(),
+        name_tc: '流動郵政局 ' + this.selectedPostOffice,
+        name_en: 'Mobile Post Office ' + this.selectedPostOffice,
+        name_sc: '流动邮政局 ' + this.selectedPostOffice,
+        day_of_week_code: 0,
+        open_hour: '',
+        close_hour: '',
+      };
+      if (sessionStorage.getItem('editData')) {
+      } else {
+        for (let day of this.selectedDays) {
+          insertData.day_of_week_code = day.value;
+          insertData.open_hour = day.openHour ? day.openHour.toTimeString().slice(0, 5) : '';
+          insertData.close_hour = day.closeHour ? day.closeHour.toTimeString().slice(0, 5) : '';
+          insert(insertData)
+            .then((response) => {
+              console.log('Insert successful:', response.data);
+            })
+            .catch((error) => {
+              console.error('Insert failed:', error);
+            });
+          this.message.create('success', this.getTranslation('insertSuccess'));
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 2500);
+        }
+      }
     }
   }
 
