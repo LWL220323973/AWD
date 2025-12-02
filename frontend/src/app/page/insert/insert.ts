@@ -12,6 +12,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { selectMobilePostOfficeName, selectMobilePostOffice } from '../../api/select';
 import { insert } from '../../api/insert';
+import { deleteMobilePostOffice } from '../../api/delete';
+import { updateMobilePostOffice } from '../../api/update';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -170,15 +172,20 @@ export class Insert implements OnInit, OnDestroy {
         const closeHour = item.close_hour
           ? new Date(2099, 12, 31, item.close_hour.slice(0, 2), item.close_hour.slice(3, 5))
           : null;
-
         day.open = true;
         day.openHour = openHour;
         day.closeHour = closeHour;
+        this.selectedDays.push(day);
+        this.beforeSelectedDays.push({
+          open: day.open,
+          openHour: day.openHour,
+          closeHour: day.closeHour,
+          value: day.value,
+          label: day.label,
+          id: item.id,
+        });
       }
     });
-
-    this.selectedDays = this.weekdayOptions.filter((d) => d.open);
-    this.beforeSelectedDays = this.selectedDays.map((day) => ({ ...day }));
   }
 
   currentLanguage: string = '';
@@ -203,7 +210,7 @@ export class Insert implements OnInit, OnDestroy {
   content: string = '';
 
   editData: any = null;
-  beforeSelectedDays: weekday[] = [];
+  beforeSelectedDays: any[] = [];
   // Translation method - uses LanguageService
   getTranslation(key: string): string {
     return this.language.getTranslation(key);
@@ -394,6 +401,56 @@ export class Insert implements OnInit, OnDestroy {
         close_hour: '',
       };
       if (sessionStorage.getItem('editData')) {
+        const bd = this.beforeSelectedDays.filter((day) => day.open);
+        const cd = this.selectedDays.filter((day) => day.open);
+        this.weekdayOptions.forEach((day) => {
+          const beforeDay = bd.find((d) => d.value === day.value)
+            ? bd.find((d) => d.value === day.value)
+            : null;
+          const currentDay = cd.find((d) => d.value === day.value)
+            ? cd.find((d) => d.value === day.value)
+            : null;
+          if (beforeDay === null && currentDay == null) {
+          } else if (beforeDay == null && currentDay != null) {
+            insertData.day_of_week_code = currentDay.value;
+            insertData.open_hour = currentDay.openHour
+              ? currentDay.openHour.toTimeString().slice(0, 5)
+              : '';
+            insertData.close_hour = currentDay.closeHour
+              ? currentDay.closeHour.toTimeString().slice(0, 5)
+              : '';
+            insert(insertData)
+              .then((response) => {
+                console.log('Insert successful:', response.data);
+              })
+              .catch((error) => {
+                console.error('Insert failed:', error);
+              });
+          } else if (beforeDay != null && currentDay == null) {
+            deleteMobilePostOffice(beforeDay.id)
+              .then((response) => {
+                console.log('Delete successful:', response.data);
+              })
+              .catch((error) => {
+                console.error('Delete failed:', error);
+              });
+          } else if (beforeDay != null && currentDay != null) {
+            insertData.day_of_week_code = currentDay.value;
+            insertData.open_hour = currentDay.openHour
+              ? currentDay.openHour.toTimeString().slice(0, 5)
+              : '';
+            insertData.close_hour = currentDay.closeHour
+              ? currentDay.closeHour.toTimeString().slice(0, 5)
+              : '';
+            updateMobilePostOffice(beforeDay.id, insertData)
+              .then((response) => {
+                console.log('Update successful:', response.data);
+              })
+              .catch((error) => {
+                console.error('Update failed:', error);
+              });
+          }
+        });
       } else {
         for (let day of this.selectedDays) {
           insertData.day_of_week_code = day.value;

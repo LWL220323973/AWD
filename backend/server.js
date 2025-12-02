@@ -59,8 +59,8 @@ server.delete("/api/deleteMobilePostOffice", (req, res) => {
 
 // Update mobile office by officeID
 server.put("/api/updateMobilePostOffice", (req, res) => {
-  const officeID = req.query.officeID;
-  const officeInfo = req.body;
+  const officeID = req.body.params.id;
+  const officeInfo = req.body.params;
   updateMobilePostOffice(officeID, officeInfo, res);
 });
 
@@ -169,7 +169,7 @@ function deleteMobilePostOffice(officeID, res) {
       console.error("Error deleting data:", err);
       return;
     }
-    res.json({
+    res.status(200).json({
       success: true,
       details: officeID,
       message: "Data deleted successfully for officeID: " + officeID,
@@ -179,7 +179,30 @@ function deleteMobilePostOffice(officeID, res) {
 }
 
 // Update mobile office by officeID
-function updateMobilePostOffice(officeID, officeInfo) {}
+function updateMobilePostOffice(officeID, officeInfo, res) {
+  const sql = "UPDATE `post_mobile_office` SET ? WHERE id = ?";
+  const values = [officeInfo, officeID];
+  conn.query(sql, values, (err) => {
+    if (officeID === undefined || officeID === "") {
+      res.status(444).json({
+        details: "officeID",
+        message: "Please provide a valid value for the officeID parameter",
+        error: "Missing officeID parameter",
+      });
+      return;
+    }
+    if (err) {
+      console.error("Error updating data:", err);
+      return;
+    }
+    res.status(200).json({
+      success: true,
+      details: values,
+      message: "Data updated successfully for officeID: " + officeID,
+    });
+    console.log("Data updated successfully for officeID: ", officeID);
+  });
+}
 
 //Select mobile office
 function selectMobilePostOffice(searchParams, res) {
@@ -262,7 +285,7 @@ function selectMobilePostOffice(searchParams, res) {
         });
         return;
       }
-      res.json({
+      res.status(200).json({
         success: true,
         data: results,
         message: "Selected records " + results.length,
