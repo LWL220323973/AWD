@@ -56,5 +56,6 @@
   "submit": "Submit",
   "missFields": "Please fill in the following required fields:",
   "back": "Back to Home",
-  "insertSuccess": "Mobile Post Office has been successfully added!"
+  "insertSuccess": "Mobile Post Office has been successfully added!",
+  "updateSuccess": "Mobile Post Office has been successfully updated!"
 }

@@ -368,7 +368,7 @@ export class Insert implements OnInit, OnDestroy {
           missingFields.push(`${this.getTranslation('openHours')} - ${workday.label}`);
         }
         if (!workday.closeHour) {
-          missingFields.push(`${this.getTranslation('closingHours')} - ${workday.label}`);
+          missingFields.push(`${this.getTranslation('closeHours')} - ${workday.label}`);
         }
       }
     }
@@ -451,6 +451,7 @@ export class Insert implements OnInit, OnDestroy {
               });
           }
         });
+        this.message.create('success', this.getTranslation('updateSuccess'));
       } else {
         for (let day of this.selectedDays) {
           insertData.day_of_week_code = day.value;
