@@ -71,6 +71,7 @@ export class Home implements OnInit, OnDestroy {
       this.postOfficeNames = names;
     });
     this.onSubmit();
+    this.currentLanguage = this.language.currentLanguage
 
     // Listen to language changes - skip the first emit to avoid duplicate API calls
     this.language.selectedLanguage$
@@ -92,6 +93,7 @@ export class Home implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(async (translations) => {
+        this.currentLanguage = this.language.currentLanguage;
         this.updateOptions();
         this.postOfficeNames = await this.mobilePostOfficeName();
         this.onSubmit();
@@ -210,6 +212,12 @@ export class Home implements OnInit, OnDestroy {
   onEdit(data: any): void {
     sessionStorage.setItem('editData', JSON.stringify(data));
     this.router.navigate(['/insert']);
+  }
+
+  onMap(latitude: number, longitude: number): void {
+    sessionStorage.setItem('mapLatitude', latitude.toString());
+    sessionStorage.setItem('mapLongitude', longitude.toString());
+    this.router.navigate(['/map'])
   }
 
   async onSubmit(): Promise<void> {

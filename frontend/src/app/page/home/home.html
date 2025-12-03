@@ -88,7 +88,7 @@
         <nz-empty [nzNotFoundContent]="getTranslation('No data')"></nz-empty>
         } @for (officeName of getPostOfficeNamesForDayOfWeek(weekDay.value);track officeName){
 
-        <nz-collapse-panel [nzHeader]="officeName.name">
+        <nz-collapse-panel [nzHeader]="this.getTranslation('title') + ' ' + officeName.code">
           <nz-table
             #searchTable
             [nzData]="getDataForMobileCodeAndDayOfWeek(officeName.code, weekDay.value)"
@@ -107,7 +107,6 @@
             </thead>
             <tbody>
               <tr *ngFor="let data of searchTable.data">
-                <!-- <td>{{ data.name }}</td> -->
                 <td>
                   {{
                     currentLanguage === 'en-US'
@@ -118,13 +117,15 @@
                   }}
                 </td>
                 <td>
-                  {{
-                    currentLanguage === 'en-US'
-                      ? data.location_en
-                      : currentLanguage === 'zh-TW'
-                      ? data.location_tc
-                      : data.location_sc
-                  }}
+                  <a nz-button nzType="link" (click)= "onMap(data.latitude, data.longitude)">
+                    {{
+                      currentLanguage === 'en-US'
+                        ? data.location_en
+                        : currentLanguage === 'zh-TW'
+                        ? data.location_tc
+                        : data.location_sc
+                    }}
+                  </a>
                 </td>
                 <td>
                   {{

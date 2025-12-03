@@ -1,0 +1,7 @@
+<button nz-button nzType="primary" class="btnBack" (click)="goBack()">
+    <nz-icon nzType="arrow-left" nzTheme="outline" />
+  {{ getTranslation('back') }}
+</button>
+<google-map [center]="center" [zoom]="17" height="500px" width="100%">
+  <map-marker [position]="center"></map-marker>
+</google-map>
