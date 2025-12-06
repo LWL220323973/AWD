@@ -1,6 +1,7 @@
 import express from "express";
 import mysql from "mysql2";
 import fs from "fs";
+import http from "http";
 
 const server = express();
 
@@ -34,7 +35,7 @@ const conn = mysql.createConnection({
 
 server.listen(8080, function () {
   console.log("server started");
-  initializeFileOperations();
+  initializeOperations();
 });
 
 conn.connect((err) => {
@@ -345,8 +346,9 @@ function selectMobilePostOfficeName(res) {
   });
 }
 
-//Initialize file operations to read JSON files and insert data into the database
-function initializeFileOperations() {
+// Initialize file operations
+function initializeOperations() {
+  // Delete existing data
   conn.query("DROP TABLE IF EXISTS `post_mobile_office`", (err, results) => {
     if (err) {
       console.error("Error deleting existing data:", err);
@@ -355,6 +357,7 @@ function initializeFileOperations() {
     console.log("Existing database deleted successfully.");
   });
 
+  // Create table
   fs.readFile(
     "../Information/create_mobile_office_table.sql",
     "utf8",
@@ -368,59 +371,50 @@ function initializeFileOperations() {
           console.error("Error creating table:", err);
           return;
         }
-        fs.readdir("../datasource", (err, files) => {
-          if (err) {
-            console.error("Error reading directory:", err);
-            return;
-          }
-          files.forEach((file) => {
-            if (file.endsWith(".json")) {
-              fs.readFile(`../datasource/${file}`, "utf8", (err, data) => {
-                if (err) {
-                  console.error("Error reading JSON file:", err);
-                  return;
-                }
-                try {
-                  const jsonData = JSON.parse(data);
-                  jsonData.data.forEach((item) => {
-                    const sql =
-                      "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    const values = [
-                      item.mobileCode,
-                      item.locationTC,
-                      item.locationSC,
-                      item.locationEN,
-                      item.addressTC,
-                      item.addressSC,
-                      item.addressEN,
-                      item.nameTC,
-                      item.nameSC,
-                      item.nameEN,
-                      item.districtTC,
-                      item.districtSC,
-                      item.districtEN,
-                      item.openHour,
-                      item.closeHour,
-                      item.dayOfWeekCode,
-                      item.latitude,
-                      item.longitude,
-                    ];
-                    conn.query(sql, values, (err, results) => {
-                      if (err) {
-                        console.error("Error inserting data:", err);
-                        return;
-                      }
-                      // console.log("Data inserted successfully: ", values);
-                    });
-                  });
-                } catch (parseErr) {
-                  console.error("Error parsing JSON:", parseErr);
-                }
-              });
-            }
-          });
-        });
       });
     }
   );
+
+  // Read data from API endpoint instead of local files
+  const url = "https://www.hongkongpost.hk/opendata/mobile-office.json";
+
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      const jsonData = data.data;
+      jsonData.forEach((item) => {
+        const sql =
+          "INSERT INTO `post_mobile_office`( `mobile_code`, `location_tc`, `location_sc`, `location_en`, `address_tc`, `address_sc`, `address_en`, `name_tc`, `name_sc`, `name_en`, `district_tc`, `district_sc`, `district_en`, `open_hour`, `close_hour`, `day_of_week_code`, `latitude`, `longitude`)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        const values = [
+          item.mobileCode,
+          item.locationTC,
+          item.locationSC,
+          item.locationEN,
+          item.addressTC,
+          item.addressSC,
+          item.addressEN,
+          item.nameTC,
+          item.nameSC,
+          item.nameEN,
+          item.districtTC,
+          item.districtSC,
+          item.districtEN,
+          item.openHour,
+          item.closeHour,
+          item.dayOfWeekCode,
+          item.latitude,
+          item.longitude,
+        ];
+        conn.query(sql, values, (err, results) => {
+          if (err) {
+            console.error("Error inserting data:", err);
+            return;
+          }
+          // console.log("Data inserted successfully: ", values);
+        });
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching data from API:", error);
+    });
 }
