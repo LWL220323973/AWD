@@ -57,5 +57,6 @@
   "missFields": "Please fill in the following required fields:",
   "back": "Back to Home",
   "insertSuccess": "Mobile Post Office has been successfully added!",
-  "updateSuccess": "Mobile Post Office has been successfully updated!"
+  "updateSuccess": "Mobile Post Office has been successfully updated!",
+  "duplicateEntry": "A mobile post office with the same location and address already exists!"
 }

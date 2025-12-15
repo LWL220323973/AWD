@@ -65,6 +65,7 @@ export class Home implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit() {
+    sessionStorage.removeItem('editData');
     // Initialize options on first load
     this.updateOptions();
     this.mobilePostOfficeName().then((names) => {

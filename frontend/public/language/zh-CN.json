@@ -57,5 +57,6 @@
   "missFields": "请填写以下必填字段：",
   "back": "返回首页",
   "insertSuccess": "流动邮政局已成功添加！",
-  "updateSuccess": "流动邮政局已成功更新！"
+  "updateSuccess": "流动邮政局已成功更新！",
+  "duplicateEntry": "具有相同地点和地址的流动邮政局已存在！"
 }

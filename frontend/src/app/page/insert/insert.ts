@@ -394,12 +394,45 @@ export class Insert implements OnInit, OnDestroy {
         latitude: this.latitude.trim(),
         longitude: this.longitude.trim(),
         name_tc: '流動郵政局 ' + this.selectedPostOffice,
-        name_en: 'Mobile Post Office ' + this.selectedPostOffice,
+        name_en: 'Mobile Post Offices ' + this.selectedPostOffice,
         name_sc: '流动邮政局 ' + this.selectedPostOffice,
         day_of_week_code: 0,
         open_hour: '',
         close_hour: '',
       };
+      const scAddressChecking = await selectMobilePostOffice({
+        address: this.address_CHS.trim(),
+      });
+      const scLocationChecking = await selectMobilePostOffice({
+        location: this.location_CHS.trim(),
+      });
+      const enAddressChecking = await selectMobilePostOffice({
+        address: this.address_EN.trim(),
+      });
+      const enLocationChecking = await selectMobilePostOffice({
+        location: this.location_EN.trim(),
+      });
+      const tcAddressChecking = await selectMobilePostOffice({
+        address: this.address_TW.trim(),
+      });
+      const tcLocationChecking = await selectMobilePostOffice({
+        location: this.location_TW.trim(),
+      });
+      if (
+        scAddressChecking.data.data.length > 0 ||
+        scLocationChecking.data.data.length > 0 ||
+        enAddressChecking.data.data.length > 0 ||
+        enLocationChecking.data.data.length > 0 ||
+        tcAddressChecking.data.data.length > 0 ||
+        tcLocationChecking.data.data.length > 0
+      ) {
+        this.message.create('error', this.getTranslation('duplicateEntry'));
+        setTimeout(() => {
+          this.router.navigate(['/home']);
+        }, 2500);
+        return;
+      }
+
       if (sessionStorage.getItem('editData')) {
         const bd = this.beforeSelectedDays.filter((day) => day.open);
         const cd = this.selectedDays.filter((day) => day.open);
@@ -410,8 +443,7 @@ export class Insert implements OnInit, OnDestroy {
           const currentDay = cd.find((d) => d.value === day.value)
             ? cd.find((d) => d.value === day.value)
             : null;
-          if (beforeDay === null && currentDay == null) {
-          } else if (beforeDay == null && currentDay != null) {
+          if (beforeDay == null && currentDay != null) {
             insertData.day_of_week_code = currentDay.value;
             insertData.open_hour = currentDay.openHour
               ? currentDay.openHour.toTimeString().slice(0, 5)
@@ -452,6 +484,9 @@ export class Insert implements OnInit, OnDestroy {
           }
         });
         this.message.create('success', this.getTranslation('updateSuccess'));
+        setTimeout(() => {
+          this.router.navigate(['/home']);
+        }, 2500);
       } else {
         for (let day of this.selectedDays) {
           insertData.day_of_week_code = day.value;
