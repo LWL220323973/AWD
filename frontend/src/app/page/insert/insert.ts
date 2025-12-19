@@ -459,13 +459,15 @@ export class Insert implements OnInit, OnDestroy {
                 console.error('Insert failed:', error);
               });
           } else if (beforeDay != null && currentDay == null) {
-            deleteMobilePostOffice(beforeDay.id)
-              .then((response) => {
-                console.log('Delete successful:', response.data);
-              })
-              .catch((error) => {
-                console.error('Delete failed:', error);
-              });
+            if (beforeDay.id) {
+              deleteMobilePostOffice(beforeDay.id)
+                .then((response) => {
+                  console.log('Delete successful:', response.data);
+                })
+                .catch((error) => {
+                  console.error('Delete failed:', error);
+                });
+            }
           } else if (beforeDay != null && currentDay != null) {
             insertData.day_of_week_code = currentDay.value;
             insertData.open_hour = currentDay.openHour
@@ -474,13 +476,15 @@ export class Insert implements OnInit, OnDestroy {
             insertData.close_hour = currentDay.closeHour
               ? currentDay.closeHour.toTimeString().slice(0, 5)
               : '';
-            updateMobilePostOffice(beforeDay.id, insertData)
-              .then((response) => {
-                console.log('Update successful:', response.data);
-              })
-              .catch((error) => {
-                console.error('Update failed:', error);
-              });
+            if (beforeDay.id) {
+              updateMobilePostOffice(beforeDay.id, insertData)
+                .then((response) => {
+                  console.log('Update successful:', response.data);
+                })
+                .catch((error) => {
+                  console.error('Update failed:', error);
+                });
+            }
           }
         });
         this.message.create('success', this.getTranslation('updateSuccess'));

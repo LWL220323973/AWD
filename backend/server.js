@@ -1,7 +1,6 @@
 import express from "express";
 import mysql from "mysql2";
 import fs from "fs";
-import http from "http";
 
 const server = express();
 
@@ -54,12 +53,27 @@ server.post("/api/insertMobilePostOffice", (req, res) => {
 
 // Delete mobile office by officeID
 server.delete("/api/deleteMobilePostOffice", (req, res) => {
+  if (!req.query || !req.query.id) {
+    return res.status(444).json({
+      details: "officeID",
+      message: "Please provide a valid value for the officeID parameter",
+      error: "Missing officeID parameter",
+    });
+  }
   const officeID = req.query.id;
   deleteMobilePostOffice(officeID, res);
 });
 
 // Update mobile office by officeID
 server.put("/api/updateMobilePostOffice", (req, res) => {
+  console.log(req.body.params.id);
+  if (!req.body || !req.body.params || !req.body.params.id) {
+    return res.status(444).json({
+      details: "officeID",
+      message: "Please provide a valid value for the officeID parameter",
+      error: "Missing officeID parameter",
+    });
+  }
   const officeID = req.body.params.id;
   const officeInfo = req.body.params;
   updateMobilePostOffice(officeID, officeInfo, res);
@@ -183,15 +197,17 @@ function deleteMobilePostOffice(officeID, res) {
 function updateMobilePostOffice(officeID, officeInfo, res) {
   const sql = "UPDATE `post_mobile_office` SET ? WHERE id = ?";
   const values = [officeInfo, officeID];
-  conn.query(sql, values, (err) => {
-    if (officeID === undefined || officeID === "") {
+  for (const key in officeInfo) {
+    if (officeInfo[key] === undefined || officeInfo[key] === "") {
       res.status(444).json({
-        details: "officeID",
-        message: "Please provide a valid value for the officeID parameter",
-        error: "Missing officeID parameter",
+        details: key,
+        message: "Please provide a valid value for the " + key + " parameter",
+        error: "Missing " + key + " parameter",
       });
       return;
     }
+  }
+  conn.query(sql, values, (err) => {
     if (err) {
       console.error("Error updating data:", err);
       return;
