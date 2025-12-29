@@ -265,7 +265,7 @@ function selectMobilePostOffice(searchParams, res) {
     if (searchParams.openHour.trim() === "") {
       errParams.push("openHour");
     } else {
-      sql += " AND open_hour <= ? ";
+      sql += " AND open_hour >= ? ";
       values.push(searchParams.openHour);
     }
   }
@@ -274,7 +274,7 @@ function selectMobilePostOffice(searchParams, res) {
     if (searchParams.closeHour.trim() === "") {
       errParams.push("closeHour");
     } else {
-      sql += " AND close_hour >= ? ";
+      sql += " AND close_hour <= ? ";
       values.push(searchParams.closeHour);
     }
   }
@@ -333,11 +333,20 @@ function selectMobilePostOfficeByID(searchParams, res) {
       });
       return;
     }
-    res.json({
-      success: true,
-      data: results,
-      message: "Selected record success",
-    });
+    if (results.length === 0) {
+      res.status(500).json({
+        error: "Record not found",
+        details: "ID",
+        message: "No record found for the provided ID",
+      });
+      return;
+    } else {
+      res.json({
+        success: true,
+        data: results,
+        message: "Selected record success",
+      });
+    }
   });
 }
 

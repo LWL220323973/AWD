@@ -1,4 +1,17 @@
-@echo off
+REM startup.bat
 
-start "Frontend" cmd /k "cd frontend && npm start"
-start "Backend" cmd /k "cd backend && npm start"
+cd backend
+
+if not exist node_modules (
+    echo Installing npm dependencies for admin...
+    npm install--legacy-peer-deps
+)
+start pwsh -NoExit -Command "npm start"
+
+cd ../frontend
+
+if not exist node_modules (
+    echo Installing npm dependencies for customer...
+    npm install --legacy-peer-deps
+)
+start pwsh -NoExit -Command "npm start"
