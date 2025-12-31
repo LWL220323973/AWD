@@ -384,7 +384,7 @@ function initializeOperations() {
 
   // Create table
   fs.readFile(
-    "../Information/create_mobile_office_table.sql",
+    "./database/create_mobile_office_table.sql",
     "utf8",
     (err, sql) => {
       if (err) {
